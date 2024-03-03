@@ -1,12 +1,28 @@
 // -----------------------------------------
 // BABALIBA (C) 1984 Dinamic (2004) remake
-// Programa: Miguel A. García Prada
-// Gráficos: Davit Masiá Coscollar
-// Música  & FX: Federico J. Álvarez Valero
+// Programa: Miguel A. Garcï¿½a Prada
+// Grï¿½ficos: Davit Masiï¿½ Coscollar
+// Mï¿½sica  & FX: Federico J. ï¿½lvarez Valero
 // -----------------------------------------
 
 
 Program Babaliba;
+
+import "mod_video";
+import "mod_proc";
+import "mod_map";
+import "mod_key";
+import "mod_rand";
+import "mod_grproc";
+import "mod_text";
+import "mod_scroll";
+import "mod_file";
+import "mod_timers";
+import "mod_effects";
+import "mod_sound";
+import "mod_screen";
+import "mod_wm";
+import "mod_string";
 
 Const
     pant_inicio=74;
@@ -47,14 +63,15 @@ Global
     file_data;
         bicho_data;
     byte vidas;
-    byte bombas;
+    int bombas;
         bomba; //si hay bomba activa=true
         byte pant_bomba=200; //pantalla en la que se coloca la bomba
-        explosion; //si explosionó true
+        explosion; //si explosionï¿½ true
     tiempo;
     graf1;
     Byte lectura[49];
-        Byte lectura_bichos[5];
+        //Byte lectura_bichos[5];
+        int lectura_bichos[5];
         x_mono;
         y_mono;
         llave_verde;
@@ -86,10 +103,12 @@ Global
 
 Begin
 
-Full_screen=1;
+set_mode(640,480,16,MODE_WINDOW);
+
+// Full_screen=1;
 set_title ("Babaliba Remake");
-Graph_mode = mode_16bits;
-set_mode(m640x480);
+// Graph_mode = mode_16bits;
+// set_mode(m640x480);
 set_fps (30, 4);
 SET_WAV_VOLUME (-1, 64 );
 set_song_volume (64);
@@ -207,7 +226,7 @@ end //process menu
 
 
 // MAPEADOR
-// ESTE PROCESO CREA UN MAPA DE PANTALLA EN BLANCO Y COLOCA LOS BLOQUES DE GRAFICOS SEGÚN LEA DEL ARCHIVO DE DATOS DE PANTALLA.
+// ESTE PROCESO CREA UN MAPA DE PANTALLA EN BLANCO Y COLOCA LOS BLOQUES DE GRAFICOS SEGï¿½N LEA DEL ARCHIVO DE DATOS DE PANTALLA.
 // COMO ENTRADA SOLO NECESITA EL NUMERO DE PANTALLA QUE CORRESPONDA, SIENDO '0' LA PANTALLA SUPERIOR IZQUIERDA Y NUMERANDOSE
 // EN EL SENTIDO USUAL DE LECTURA.
 
@@ -223,13 +242,19 @@ Private
 Begin
     map_clear (graf1, 999, 0); //LIMPIAMOS EL GRAFICO EN EL QUE VAMOS A 'TILEAR'
     lee_mapa(pant);
-    From bucle=0 To 49 //COMIENZA EL BUCLE PARA VOLCAR LOS BLOQUES GRAFICOS EN LA PANTALLA.
-    If (lectura[puntero]>0 and lectura[puntero]!=99) map_put (graf1, 999, lectura[puntero], x1, y1); End //COLOCA EL BLOQUE EN LAS COORDENADAS CORRESPONDIENTES SIEMPRE QUE NO SEA '0'
-    x1=x1+w_bloque; //INCREMENTA LA COORDENADA HORIZONTAL PARA DIBUJAR EL PROXIMO BUCLE.
-    If (x1>580) //SI LLEGAMOS AL FINAL DE LA PANTALLA PONEMOS BAJAMOS UNA FILA Y RESTAURAMOS 'X' AL COMIENZO.
-    x1=30;y1=y1+w_bloque;
-    End //if (x1
-    puntero++; //INCREMENTAMOS EL PUNTERO QUE NOS DICE QUE BLOQUE HAY QUE IMPRIMIR.
+    bucle=0;
+    LOOP
+        if (bucle > 49)
+            break;
+        end
+        //From bucle=0 To 49 //COMIENZA EL BUCLE PARA VOLCAR LOS BLOQUES GRAFICOS EN LA PANTALLA.
+        If (lectura[puntero]>0 and lectura[puntero]!=99) map_put (graf1, 999, lectura[puntero], x1, y1); End //COLOCA EL BLOQUE EN LAS COORDENADAS CORRESPONDIENTES SIEMPRE QUE NO SEA '0'
+        x1=x1+w_bloque; //INCREMENTA LA COORDENADA HORIZONTAL PARA DIBUJAR EL PROXIMO BUCLE.
+        If (x1>580) //SI LLEGAMOS AL FINAL DE LA PANTALLA PONEMOS BAJAMOS UNA FILA Y RESTAURAMOS 'X' AL COMIENZO.
+            x1=30;y1=y1+w_bloque;
+        End //if (x1
+        puntero++; //INCREMENTAMOS EL PUNTERO QUE NOS DICE QUE BLOQUE HAY QUE IMPRIMIR.
+        bucle++;
     End //for (bucle
 
 End //MAPEADO
@@ -360,12 +385,18 @@ Begin
      fseek(bicho_data, (pantalla*6), 0); //SITUA EL PUNTERO AL COMIENZO DEL BLOQUE DE LA PANTALLA.
      fread(bicho_data, lectura_bichos); //LEE LOS 6 BYTES DE LA PANTALLA Y METE LOS DATOS EN ARRAY 'LECTURA_BICHOS'
 
-     from bucle = 0 to 5
+    bucle=0;
+    loop
+        if (bucle > 5)
+            break;
+        end
+        //from bucle = 0 to 5
 
      switch (lectura_bichos[bucle])
 
      case 201:
-                malo_movil(pant, (lectura_bichos[(bucle+1)]));
+                malo_movil(pant, pant);
+                //malo_movil(pant, (lectura_bichos[(bucle+1)]));
                 bucle=bucle+1;
      end // case 201
 
@@ -390,6 +421,7 @@ Begin
 
      end // switch
 
+        bucle++;
      end // from bucle= 0 to 5
      
 End //Bichos
@@ -583,81 +615,77 @@ end //begin
 //PROCESO PARA CREAR LOS ENEMIGOS QUE SE MUEVEN SIGUENDO UN PATRON
 //ENTRADA X e Y
 
-Process ciclico(int comx, int finx, int y)
+PROCESS ciclico( int comx, int finx, int y )
 
-Private
-
+PRIVATE
        int desp;
 
-Begin
-
+BEGIN
      desp=20;
      comx=((comx*60)-10);
      finx=((finx*60)-10);
      y=((y*60)-10);
      x=comx;
      graph=108;
-     loop
-     if (desp>0)
-     flags=0;
-     else
-     flags=1;
-     end // if (desp>0)
-     frame;
-     frame;
-     x=x+desp;
-     if (x>(finx-30)) desp=-20; end
-     if (x<(comx+20)) desp=+20; end
-     graph++;
-     if (graph==110) graph=108; end
-     end //loop
+     LOOP
+        IF (desp>0)
+            flags=0;
+        ELSE
+            flags=1;
+        END // if (desp>0)
+        frame;
+        frame;
+        x=x+desp;
+        IF (x>(finx-30)) desp=-20; END
+        IF (x<(comx+20)) desp=+20; END
+        graph++;
+        IF (graph==110) graph=108; END
+    END //loop
 
-end //Process ciclico(int x, int y)
+END //Process ciclico(int x, int y)
 
 
 //ENEMIGOS MOVILES
 //PROCESO PARA CREAR LOS ENEMIGOS QUE SE MUEVEN ALEATORIAMENTE POR LA PANTALLA
 
-Process malo_movil(Int pant, Int codigo)
+PROCESS malo_movil( int pant, int codigo )
 
-Private
+PRIVATE
 
     x1;
     y1;
-        xb1;
+    xb1;
     cont;
     cont2;
     bucle;
-       codigofin;
-Begin
+    codigofin;
 
-        codigo=rand (1,3);
-        if (codigo==1)
+BEGIN
+    codigo=rand (1,3);
+    if (codigo==1)
         codigo=108;
         codigofin=109;
-        end
-        if (codigo==2)
+    end
+    if (codigo==2)
         codigo=128;
         codigofin=129;
-        end
-        if (codigo==3)
+    end
+    if (codigo==3)
         codigo=130;
         codigofin=132;
-        end
+    end
     x1=rand (2,7);
-        if (pant==74) x1=2; end
+    if (pant==74) x1=2; end
     y1=rand (1,3);
- 
-         if ((pant==15) || (pant==51))
-         y1=rand(2,3);
-         end //if ((pant==15) || (pant==51))
+    if ((pant==15) || (pant==51))
+        y1=rand(2,3);
+    end //if ((pant==15) || (pant==51))
          
     cont2=((y1*10)+x1);
-    While (lectura[cont2]<>0)
-    x1=rand (1,8);
-    y1=rand (1,3);
-
-         if ((pant==15) || (pant==51))
+    WHILE (lectura[cont2]<>0)
+        x1=rand (1,8);
+        y1=rand (1,3);
+         IF ((pant==15) || (pant==51))
          y1=rand(2,3);
          end //if ((pant==15) || (pant==51))
  
@@ -685,59 +713,83 @@ Begin
     If ((cont==1) AND (lectura[(cont2-1)]==0) AND (x>50))
     cont2--;
          flags=1;
-    From bucle=1 To 3
-    x=x-20;
-    If (graph<codigofin)
-    graph++;
-    Else
-    graph=codigo;
-    End
-    Frame;
-              frame;
+    bucle=1;
+    LOOP
+        IF (bucle > 3)
+            BREAK;
+        END
+        //From bucle=1 To 3
+        x=x-20;
+        If (graph<codigofin)
+            graph++;
+        Else
+            graph=codigo;
+        End
+        Frame;
+        frame;
+        bucle++;
     End
     End
 
     If ((cont==5) AND (lectura[(cont2+1)]==0) AND (x<590))
         cont2++;
         flags=0;
-    From bucle=1 To 3
-    x=x+20;
-    If (graph<codigofin)
-    graph++;
-    Else
-    graph=codigo;
-    End
-    Frame;
-              frame;
-    End
+        bucle=1;
+        LOOP
+            IF (bucle > 3)
+                BREAK;
+            END
+            //From bucle=1 To 3
+            x=x+20;
+            If (graph<codigofin)
+                graph++;
+            Else
+                graph=codigo;
+            End
+            Frame;
+            frame;
+            bucle++;
+        End
         End
 
     If ((cont==10) AND (lectura[(cont2-10)]==0) AND (y>xb1))
         cont2=cont2-10;
-        From bucle=1 To 3
-    y=y-20;
-    If (graph<codigofin)
-    graph++;
-    Else
-    graph=codigo;
-    End
-    Frame;
-              frame;
-    End
+        bucle=1;
+        LOOP
+            IF (bucle > 3)
+                BREAK;
+            END
+            //From bucle=1 To 3
+            y=y-20;
+            If (graph<codigofin)
+                graph++;
+            Else
+                graph=codigo;
+            End
+            Frame;
+            frame;
+            bucle++;
+        End
     End
 
     If ((cont==15) AND (lectura[(cont2+10)]==0) AND (y<270))
     cont2=cont2+10;
-        From bucle=1 To 3
-    y=y+20;
-    If (graph<codigofin)
-    graph++;
-    Else
-    graph=codigo;
-    End
-    Frame;
-              frame;
-    End
+            bucle=1;
+        LOOP
+            IF (bucle > 3)
+                BREAK;
+            END
+            //From bucle=1 To 3
+            y=y+20;
+            If (graph<codigofin)
+                graph++;
+            Else
+                graph=codigo;
+            End
+            Frame;
+            frame;
+            bucle++;
+        End
     End
     
     
@@ -745,7 +797,6 @@ Begin
     End // loop
 
 End //MALO_MOVIL
-
 
 //LEE MAPA
 //PROCESO PARA CARGAR EN EL ARRAY EL MAPEADO DE LA PANTALLA EN CURSO
@@ -760,7 +811,7 @@ Begin
 End //LEE_MAPA
 
 //Proceso FOSO
-//Genera la caída en el foso de los cocodrilos
+//Genera la caï¿½da en el foso de los cocodrilos
 
 Process foso()
 
@@ -797,14 +848,20 @@ begin
      x=320;
      y=70;
      angle=360000;
-     from bucle=1 to 12
-     frame;
-     frame;
-     y=y+15;
-     angle=angle-45000;
-     if (angle<0)
-     angle=360000;
-     end
+     bucle=1;
+     loop
+        if (bucle > 12) 
+            break;
+        end
+        //from bucle=1 to 12
+        frame;
+        frame;
+        y=y+15;
+        angle=angle-45000;
+        if (angle<0)
+            angle=360000;
+        end
+        bucle++;
      end //from bucle
      graph=99;
      play_wav(s_chapuzon, 0);
@@ -931,7 +988,7 @@ Begin
 
 
 
-              //fin detección objetos malignos
+              //fin detecciï¿½n objetos malignos
 
            // Cambio de pantalla a la izquierda.
 
@@ -955,14 +1012,20 @@ Begin
     graph=100;
     cont2--;
         pasos=play_wav(s_pasos, 0);
-    From bucle=1 To 3
-    x=x-20;
-    If (graph==100)
-    graph++;
-    Else
-    graph--;
-    End //if
-    Frame;
+    bucle=1;
+    loop
+        if (bucle > 3)
+            break;
+        end
+        //From bucle=1 To 3
+        x=x-20;
+        If (graph==100)
+        graph++;
+        Else
+        graph--;
+        End //if
+        Frame;
+        bucle++;
     End //from bucle
     End //if (key
 
@@ -984,7 +1047,12 @@ Begin
         graph=102;
         cont2++;
         pasos=play_wav(s_pasos, 0);
-        From bucle=1 To 3
+        bucle=1;
+        loop
+            if (bucle > 3)
+                break;
+            end
+            //From bucle=1 To 3
         x=x+20;
         If (graph==102)
         graph++;
@@ -992,6 +1060,7 @@ Begin
         graph--;
         End //if
     Frame;
+        bucle++;
         End //from bucle
         End //if (key
 
@@ -1042,14 +1111,20 @@ Begin
         graph=104;
         cont2=cont2-10;
         pasos=play_wav(s_pasos, 0);
-        From bucle=1 To 3
-        y=y-20;
-        If (graph==104)
-        graph++;
-        Else
-        graph--;
-        End //if
-    Frame;
+        bucle=1;
+        loop
+            if (bucle > 3)
+                break;
+            end;
+            //From bucle=1 To 3
+            y=y-20;
+            If (graph==104)
+            graph++;
+            Else
+            graph--;
+            End //if
+        Frame;
+            bucle++;
         End //from bucle
         End //if (key
 
@@ -1090,15 +1165,21 @@ Begin
         graph=106;
         cont2=cont2+10;
         pasos=play_wav(s_pasos, 0);
-        From bucle=1 To 3
-        y=y+20;
-        If (graph==106)
-        graph++;
-        Else
-        graph--;
-        End //if
-        Frame;
-    End //from bucle
+        bucle=1;
+        loop
+            if (bucle > 3)
+                break;
+            end;
+            //From bucle=1 To 3
+            y=y+20;
+            If (graph==106)
+            graph++;
+            Else
+            graph--;
+            End //if
+            Frame;
+            bucle++;
+        End //from bucle
         End //if (key
 
     Frame;
@@ -1109,7 +1190,7 @@ End //JOHNNY
 
 
 //PROCESO ESCALERA
-//ENTRADA D=DIRECCIÓN: 0 SUBE 1 BAJA
+//ENTRADA D=DIRECCIï¿½N: 0 SUBE 1 BAJA
 //PANTALLA DESTINO
 
 Process escalera(int d, int pant_dest)
@@ -1311,13 +1392,18 @@ process marcador(int valor, xn, yn)
         begin;
         cadena=itoa (valor);
         a=len(cadena);
-        from bucle=0 to len(cadena)-1
-        v1=substr (cadena, bucle,bucle);
-        put (graf1, (asc (v1)+102), xn,yn);
-        xn=xn+20;
-        a--;
-        frame;
-
+        bucle=0;
+        LOOP
+            if (bucle > len(cadena)-1)
+                break;
+            END
+            //from bucle=0 to len(cadena)-1
+            v1=substr (cadena, bucle,bucle);
+            put (graf1, (asc (v1)+102), xn,yn);
+            xn=xn+20;
+            a--;
+            frame;
+            bucle++;
         
         end //from bucle= 1 to string cadena
 
@@ -1457,61 +1543,85 @@ cont=rand(1,30);
 
     If ((cont==1) AND (lectura[(cont3-1)]==0) AND (x>50))
     cont3--;
-    From bucle=1 To 3
-    x=x-20;
+    bucle=1;
+    loop
+        if (bucle > 3)
+            break;
+        end
+        //From bucle=1 To 3
+        x=x-20;
         x2p=x2p-20;
-    If (graph==120)
-    graph=121;
-    Else
-    graph=120;
-    End
-    Frame;
+        If (graph==120)
+            graph=121;
+        Else
+            graph=120;
+        End
+        Frame;
         frame;
+        bucle++;
     End
     End
 
     If ((cont==5) AND (lectura[(cont3+1)]==0) AND (x<590))
         cont3++;
-    From bucle=1 To 3
-    x=x+20;
-        x2p=x2p+20;
-    If (graph==120)
-    graph=121;
-    Else
-    graph=120;
-    End
-    Frame;
-        frame;
-    End
+        bucle=1;
+        loop
+            if (bucle > 3)
+                break;
+            end;
+            //From bucle=1 To 3
+            x=x+20;
+            x2p=x2p+20;
+            If (graph==120)
+                graph=121;
+            Else
+                graph=120;
+            End
+            Frame;
+            frame;
+            bucle++;
+        End
         End
 
     If ((cont==10) AND (lectura[(cont3-10)]==0) AND (y>50))
         cont3=cont3-10;
-        From bucle=1 To 3
-    y=y-20;
-        y2p=y2p-20;
-    If (graph==120)
-    graph=121;
-    Else
-    graph=120;
-    End
-    Frame;
-        frame;
+        bucle=1;
+        loop
+            if (bucle > 3)
+                break;
+            end
+            //From bucle=1 To 3
+            y=y-20;
+            y2p=y2p-20;
+            If (graph==120)
+                graph=121;
+            Else
+                graph=120;
+            End
+            Frame;
+            frame;
+            bucle++;
     End
     End
 
     If ((cont==15) AND (lectura[(cont3+10)]==0) AND (y<270))
     cont3=cont3+10;
-        From bucle=1 To 3
-    y=y+20;
-        y2p=y2p+20;
-    If (graph==120)
-    graph=121;
-    Else
-    graph=120;
-    End
-    Frame;
-        frame;
+        bucle=1;
+        loop
+            if (bucle > 3)
+                break;
+            end
+            //From bucle=1 To 3
+            y=y+20;
+            y2p=y2p+20;
+            If (graph==120)
+                graph=121;
+            Else
+                graph=120;
+            End
+            Frame;
+            frame;
+            bucle++;
     End
     End
 
