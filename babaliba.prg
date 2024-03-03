@@ -6,222 +6,231 @@
 // -----------------------------------------
 
 
-Program Babaliba;
+PROGRAM Babaliba;
 
-import "mod_video";
-import "mod_proc";
-import "mod_map";
-import "mod_key";
-import "mod_rand";
-import "mod_grproc";
-import "mod_text";
-import "mod_scroll";
-import "mod_file";
-import "mod_timers";
-import "mod_effects";
-import "mod_sound";
-import "mod_screen";
-import "mod_wm";
-import "mod_string";
+IMPORT "mod_video";
+IMPORT "mod_proc";
+IMPORT "mod_map";
+IMPORT "mod_key";
+IMPORT "mod_rand";
+IMPORT "mod_grproc";
+IMPORT "mod_text";
+IMPORT "mod_scroll";
+IMPORT "mod_file";
+IMPORT "mod_timers";
+IMPORT "mod_effects";
+IMPORT "mod_sound";
+IMPORT "mod_screen";
+IMPORT "mod_wm";
+IMPORT "mod_string";
 
-Const
+CONST
+
     pant_inicio=74;
     h_bloque=60;
     w_bloque=60;
 
-Global
+GLOBAL
 
-        baba1;
-        baba2;
-        baba3;
-        baba4;
-        baba5;
-        baba6;
-        baba7;
-        baba8;
-        babal1;
-        babal2;
-        babal3;
-        babal4;
-        babal5;
-        babal6;
-        babal7;
-        babal8;
-        hechizo;
-        babaliba;
-        
-        cont3;
-        x1p;
-        y1p;
-        x2p;
-        y2p;
-        prisionero;
-        princesa;
-        tesoro;
-        pant;
+    baba1;
+    baba2;
+    baba3;
+    baba4;
+    baba5;
+    baba6;
+    baba7;
+    baba8;
+    babal1;
+    babal2;
+    babal3;
+    babal4;
+    babal5;
+    babal6;
+    babal7;
+    babal8;
+    hechizo;
+    babaliba;
+    
+    cont3;
+    x1p;
+    y1p;
+    x2p;
+    y2p;
+    prisionero;
+    princesa;
+    tesoro;
+    pant;
     temp;
     file_data;
-        bicho_data;
+    bicho_data;
     byte vidas;
     int bombas;
-        bomba; //si hay bomba activa=true
-        byte pant_bomba=200; //pantalla en la que se coloca la bomba
-        explosion; //si explosion� true
+    bomba; //si hay bomba activa=true
+    byte pant_bomba=200; //pantalla en la que se coloca la bomba
+    explosion; //si explosion� true
     tiempo;
     graf1;
     Byte lectura[49];
-        //Byte lectura_bichos[5];
-        int lectura_bichos[5];
-        x_mono;
-        y_mono;
-        llave_verde;
-        llave_rosa;
+    //Byte lectura_bichos[5];
+    int lectura_bichos[5];
+    x_mono;
+    y_mono;
+    llave_verde;
+    llave_rosa;
 
-        //identificadores de sonidos
-        int s_explosion;
-        int s_reloj;
-        int s_serpiente;
-        int s_chapuzon;
-        int s_grito;
-        int s_pasos;
-        int s_bocado;
+    //identificadores de sonidos
+    int s_explosion;
+    int s_reloj;
+    int s_serpiente;
+    int s_chapuzon;
+    int s_grito;
+    int s_pasos;
+    int s_bocado;
 
-        //identificadores de musicas
-        int m_menu;
-        int m_muerte;
-        int m_tesoro;
-        int m_fbien;
-        int m_fmuerte;
-        int m_premio;
-        
-        //identificadores de sonidos ejecutandose
-        int canal_serpiente;
-        int reloj;
-        int pasos;
+    //identificadores de musicas
+    int m_menu;
+    int m_muerte;
+    int m_tesoro;
+    int m_fbien;
+    int m_fmuerte;
+    int m_premio;
+    
+    //identificadores de sonidos ejecutandose
+    int canal_serpiente;
+    int reloj;
+    int pasos;
         
 // COMIENZO DEL PROGRAMA
 
-Begin
+BEGIN
 
-set_mode(640,480,16,MODE_WINDOW);
+    set_mode(640,480,16,MODE_WINDOW);
 
-// Full_screen=1;
-set_title ("Babaliba Remake");
-// Graph_mode = mode_16bits;
-// set_mode(m640x480);
-set_fps (30, 4);
-SET_WAV_VOLUME (-1, 64 );
-set_song_volume (64);
-graf1=load_fpg ("graf01.fpg") ;
-file_data=fopen ("datos_mapa.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE EL MAPEADO
-bicho_data=fopen ("datos_bichos.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE LOS BICHOS
+    // Full_screen=1;
+    set_title ("Babaliba Remake");
+    // Graph_mode = mode_16bits;
+    // set_mode(m640x480);
+    set_fps (30, 4);
+    set_wav_volume (-1, 64 );
+    set_song_volume (64);
+    graf1=load_fpg ("graf01.fpg") ;
+    file_data=fopen ("datos_mapa.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE EL MAPEADO
+    bicho_data=fopen ("datos_bichos.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE LOS BICHOS
 
-//sonidos
+    //sonidos
 
-         s_explosion=load_wav("sound/bomba_exp.wav");
-         s_reloj=load_wav("sound/siseo_bomba.wav");
-         s_serpiente=load_wav("sound/serpiente.wav");
-         s_chapuzon=load_wav("sound/chapuzon.wav");
-         s_grito=load_wav("sound/grito.wav");
-         s_pasos=load_wav("sound/pasos.wav");
-         s_bocado=load_wav("sound/bocado.wav");
-         
-         m_menu=load_song("sound/menu.ogg");
-         m_muerte=load_song("sound/muerte.ogg");
-         m_tesoro=load_song("sound/tesoro.ogg");
-         m_fmuerte=load_song("sound/fin_muerte.ogg");
-         m_fbien=load_song("sound/fin_bien.ogg");
-         m_premio=load_song("sound/premio.ogg");
+    s_explosion=load_wav("sound/bomba_exp.wav");
+    s_reloj=load_wav("sound/siseo_bomba.wav");
+    s_serpiente=load_wav("sound/serpiente.wav");
+    s_chapuzon=load_wav("sound/chapuzon.wav");
+    s_grito=load_wav("sound/grito.wav");
+    s_pasos=load_wav("sound/pasos.wav");
+    s_bocado=load_wav("sound/bocado.wav");
+    
+    m_menu=load_song("sound/menu.ogg");
+    m_muerte=load_song("sound/muerte.ogg");
+    m_tesoro=load_song("sound/tesoro.ogg");
+    m_fmuerte=load_song("sound/fin_muerte.ogg");
+    m_fbien=load_song("sound/fin_bien.ogg");
+    m_premio=load_song("sound/premio.ogg");
 
-menu();
+    menu();
 
-end //begin
+END //begin
 
 // FINAL DEL PROGRAMA
 
-process menu()
+PROCESS menu()
 
-        begin
-        x1p=2;
-        y1p=2;
-        cont3=((y1p*10)+x1p);
-        x1p++;
-        y1p++;
-        x2p=((x1p*60)-10);
-        y2p=((y1p*60)-10);
-        llave_verde=false;
-        llave_rosa=false;
+BEGIN
 
-        vidas=5;
-        bombas=20;
-        prisionero=false;
-        princesa=false;
-        tesoro=false;
-        bomba=false;
-        explosion=false;
-        tiempo=2000;
-        pant=74;
-        x_mono=7;
-        y_mono=2;
+    x1p=2;
+    y1p=2;
+    cont3=((y1p*10)+x1p);
+    x1p++;
+    y1p++;
+    x2p=((x1p*60)-10);
+    y2p=((y1p*60)-10);
+    llave_verde=false;
+    llave_rosa=false;
 
-
-        baba1=false;
-        baba2=false;
-        baba3=false;
-        baba4=false;
-        baba5=false;
-        baba6=false;
-        baba7=false;
-        baba8=false;
-        babal1=false;
-        babal2=false;
-        babal3=false;
-        babal4=false;
-        babal5=false;
-        babal6=false;
-        babal7=false;
-        babal8=false;
-        hechizo=0;
-        babaliba=0;
-
-        let_me_alone();
-        play_song(m_menu, -1);
-    put (graf1, 84, 320,240);
-        put (graf1, 2, 50,230);
-        put (graf1, 79, 590,50);
-        banner();
-        SET_WAV_VOLUME (-1, 0 );
-        serpiente (1,3);
-        stop_wav(canal_serpiente);
-        arana(10,2);
-    Loop
-    If (key(_space)) clear_screen(); stop_song(); stop_wav(canal_serpiente); signal (type banner, s_kill); signal (type serpiente, s_kill); signal (type arana, s_kill); Break; End
-        If (key(_esc)) escape(1); end
-    Frame;
-    End
+    vidas=5;
+    bombas=20;
+    prisionero=false;
+    princesa=false;
+    tesoro=false;
+    bomba=false;
+    explosion=false;
+    tiempo=2000;
+    pant=74;
+    x_mono=7;
+    y_mono=2;
 
 
-//coloca interfaz
-put (graf1, 52, 320,240);
-put (graf1, 93, 320,450);
-put (graf1, 155, 530,370);
-put (graf1, 150, 400,370);
-put (graf1, 152, 380,370);
-SET_WAV_VOLUME (-1, 64 );
-mapeado (pant);
-put (graf1, 999, 320,170);
-bichos (pant);
-johnny(x_mono,y_mono);
-prisionero();
-tiempo();
-princesa();
-llaverosa();
-llaveverde();
-signal (type menu, s_kill);
+    baba1=false;
+    baba2=false;
+    baba3=false;
+    baba4=false;
+    baba5=false;
+    baba6=false;
+    baba7=false;
+    baba8=false;
+    babal1=false;
+    babal2=false;
+    babal3=false;
+    babal4=false;
+    babal5=false;
+    babal6=false;
+    babal7=false;
+    babal8=false;
+    hechizo=0;
+    babaliba=0;
 
+    let_me_alone();  
+    play_song(m_menu, -1);
+    put(graf1, 84, 320,240);
+    put(graf1, 2, 50,230);
+    put(graf1, 79, 590,50);
+    banner();
+    //@WIP set_wav_volume(-1, 0 );
+    serpiente(1,3);
+    stop_wav(canal_serpiente);
+    arana(10,2);
+    LOOP
+        IF (key(_space)) 
+            clear_screen(); 
+            stop_song(); 
+            stop_wav(canal_serpiente); 
+            signal(type banner, s_kill); 
+            signal(type serpiente, s_kill); 
+            signal(type arana, s_kill); 
+            break; 
+        END
+        IF (key(_esc)) 
+            escape(1);
+        END
+        frame;
+    END
 
+    //coloca interfaz
+    put(graf1, 52, 320,240);
+    put(graf1, 93, 320,450);
+    put(graf1, 155, 530,370);
+    put(graf1, 150, 400,370);
+    put(graf1, 152, 380,370);
+    //@WIP set_wav_volume(-1, 64 );
+    mapeado(pant);
+    put(graf1, 999, 320,170);
+    bichos(pant);
+    johnny(x_mono,y_mono);
+    prisionero();
+    tiempo();
+    princesa();
+    llaverosa();
+    llaveverde();
+    signal(type menu, s_kill);
 
-end //process menu
+END //process menu
 
 
 
