@@ -1,9 +1,10 @@
-// -----------------------------------------
+// -----------------------------------------------------
 // BABALIBA (C) 1984 Dinamic (2004) remake
-// Programa: Miguel A. Garc�a Prada
-// Gr�ficos: Davit Masi� Coscollar
-// M�sica  & FX: Federico J. �lvarez Valero
-// -----------------------------------------
+// Programa: Miguel A. García Prada
+// Gráficos: Davit Masiá Coscollar
+// Música & FX: Federico J. Álvarez Valero
+// Adaptación código BennuGD: Federico J. Álvarez Valero
+// -----------------------------------------------------
 
 
 PROGRAM Babaliba;
@@ -14,11 +15,8 @@ IMPORT "mod_map";
 IMPORT "mod_key";
 IMPORT "mod_rand";
 IMPORT "mod_grproc";
-IMPORT "mod_text";
-IMPORT "mod_scroll";
 IMPORT "mod_file";
 IMPORT "mod_timers";
-IMPORT "mod_effects";
 IMPORT "mod_sound";
 IMPORT "mod_screen";
 IMPORT "mod_wm";
