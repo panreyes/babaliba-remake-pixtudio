@@ -17,6 +17,7 @@ IMPORT "mod_rand";
 IMPORT "mod_grproc";
 IMPORT "mod_file";
 IMPORT "mod_timers";
+//IMPORT "mod_effects";
 IMPORT "mod_sound";
 IMPORT "mod_screen";
 IMPORT "mod_wm";
