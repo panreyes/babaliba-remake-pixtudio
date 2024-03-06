@@ -6,22 +6,19 @@
 // Adaptación código BennuGD: Federico J. Álvarez Valero
 // -----------------------------------------------------
 
+#define clear_screen() \
+    map_clear(0, background.graph)
+
+#define put(f, g, x, y) \
+    map_put(0, background.graph, f, g, x, y)
 
 PROGRAM Babaliba;
 
-IMPORT "mod_video";
-IMPORT "mod_proc";
-IMPORT "mod_map";
-IMPORT "mod_key";
-IMPORT "mod_rand";
-IMPORT "mod_grproc";
-IMPORT "mod_file";
-IMPORT "mod_timers";
-//IMPORT "mod_effects";
-IMPORT "mod_sound";
-IMPORT "mod_screen";
-IMPORT "mod_wm";
-IMPORT "mod_string";
+IMPORT "mod_gfx"
+IMPORT "mod_input"
+IMPORT "mod_sound"
+IMPORT "mod_misc"
+IMPORT "mod_debug"
 
 CONST
 
@@ -31,52 +28,52 @@ CONST
 
 GLOBAL
 
-    baba1;
-    baba2;
-    baba3;
-    baba4;
-    baba5;
-    baba6;
-    baba7;
-    baba8;
-    babal1;
-    babal2;
-    babal3;
-    babal4;
-    babal5;
-    babal6;
-    babal7;
-    babal8;
-    hechizo;
-    babaliba;
+    bool baba1;
+    bool baba2;
+    bool baba3;
+    bool baba4;
+    bool baba5;
+    bool baba6;
+    bool baba7;
+    bool baba8;
+    bool babal1;
+    bool babal2;
+    bool babal3;
+    bool babal4;
+    bool babal5;
+    bool babal6;
+    bool babal7;
+    bool babal8;
+    int hechizo;
+    int babaliba;
     
-    cont3;
-    x1p;
-    y1p;
-    x2p;
-    y2p;
-    prisionero;
-    princesa;
-    tesoro;
-    pant;
-    temp;
-    file_data;
-    bicho_data;
+    int cont3;
+    int x1p;
+    int y1p;
+    int x2p;
+    int y2p;
+    bool prisionero;
+    bool princesa;
+    bool tesoro;
+    int pant;
+    //temp;
+    int file_data; // fichero
+    int bicho_data; // fichero
     byte vidas;
     int bombas;
-    bomba; //si hay bomba activa = true
-    byte pant_bomba = 200; //pantalla en la que se coloca la bomba
-    explosion; //si explosion true
-    tiempo;
-    graf1;
+    bool bomba; //si hay bomba activa = true
+    int byte pant_bomba = 200; //pantalla en la que se coloca la bomba
+    bool explosion; //si explosion true
+    int tiempo;
+    int graf1; // fichero
     Byte lectura[49];
     int lectura_bichos[5]; //Byte lectura_bichos[5];
-    x_mono;
-    y_mono;
-    llave_verde;
-    llave_rosa;
+    int x_mono;
+    int y_mono;
+    bool llave_verde;
+    bool llave_rosa;
 
-    //identIFicadores de sonidos
+    //identificadores de sonidos
     int s_explosion;
     int s_reloj;
     int s_serpiente;
@@ -85,7 +82,7 @@ GLOBAL
     int s_pasos;
     int s_bocado;
 
-    //identIFicadores de musicas
+    //identificadores de musicas
     int m_menu;
     int m_muerte;
     int m_tesoro;
@@ -93,7 +90,7 @@ GLOBAL
     int m_fmuerte;
     int m_premio;
     
-    //identIFicadores de sonidos ejecutandose
+    //identificadores de sonidos ejecutandose
     int canal_serpiente;
     int reloj;
     int pasos;
@@ -102,32 +99,32 @@ GLOBAL
 
 BEGIN
 
-    set_mode(640, 480, 16, MODE_WINDOW); //@TODO en MODE_FULLSCREEN se queda la pantalla en negro
+    set_mode(640, 480, MODE_WINDOW); //@TODO MODE_FULLSCREEN
 
-    set_title("Babaliba Remake");
+    window_set_title("Babaliba Remake");
     set_fps(30, 4);
-    set_wav_volume(-1, 64);
-    set_song_volume(64);
-    graf1 = load_fpg("graf01.fpg") ;
+    channel_set_volume(-1, 64);
+    music_set_volume(64);
+    graf1 = fpg_load("graf01.fpg");
     file_data = fopen("datos_mapa.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE EL MAPEADO
     bicho_data = fopen("datos_bichos.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE LOS BICHOS
 
     //sonidos
 
-    s_explosion = load_wav("sound/bomba_exp.wav");
-    s_reloj = load_wav("sound/siseo_bomba.wav");
-    s_serpiente = load_wav("sound/serpiente.wav");
-    s_chapuzon = load_wav("sound/chapuzon.wav");
-    s_grito = load_wav("sound/grito.wav");
-    s_pasos = load_wav("sound/pasos.wav");
-    s_bocado = load_wav("sound/bocado.wav");
+    s_explosion = sound_load("sound/bomba_exp.wav");
+    s_reloj = sound_load("sound/siseo_bomba.wav");
+    s_serpiente = sound_load("sound/serpiente.wav");
+    s_chapuzon = sound_load("sound/chapuzon.wav");
+    s_grito = sound_load("sound/grito.wav");
+    s_pasos = sound_load("sound/pasos.wav");
+    s_bocado = sound_load("sound/bocado.wav");
     
-    m_menu = load_song("sound/menu.ogg");
-    m_muerte = load_song("sound/muerte.ogg");
-    m_tesoro = load_song("sound/tesoro.ogg");
-    m_fmuerte = load_song("sound/fin_muerte.ogg");
-    m_fbien = load_song("sound/fin_bien.ogg");
-    m_premio = load_song("sound/premio.ogg");
+    m_menu = music_load("sound/menu.ogg");
+    m_muerte = music_load("sound/muerte.ogg");
+    m_tesoro = music_load("sound/tesoro.ogg");
+    m_fmuerte = music_load("sound/fin_muerte.ogg");
+    m_fbien = music_load("sound/fin_bien.ogg");
+    m_premio = music_load("sound/premio.ogg");
 
     menu();
 
@@ -182,20 +179,20 @@ BEGIN
     babaliba = 0;
 
     let_me_alone();  
-    play_song(m_menu, -1);
+    music_play(m_menu, -1);
     put(graf1, 84, 320, 240);
     put(graf1, 2, 50, 230);
     put(graf1, 79, 590, 50);
     banner();
-    //@TODO set_wav_volume(-1, 0); // Creo que no le mola el -1
+    //@TODO sound_set_volume(-1, 0); // Creo que no le mola el -1
     serpiente(1, 3);
-    stop_wav(canal_serpiente);
+    sound_stop(canal_serpiente);
     arana(10, 2);
     LOOP
         IF (key(_space)) 
             clear_screen(); 
-            stop_song(); 
-            stop_wav(canal_serpiente); 
+            music_stop(); 
+            sound_stop(canal_serpiente); 
             signal(type banner, s_kill); 
             signal(type serpiente, s_kill); 
             signal(type arana, s_kill); 
@@ -213,14 +210,14 @@ BEGIN
     put(graf1, 155, 530, 370);
     put(graf1, 150, 400, 370);
     put(graf1, 152, 380, 370);
-    //@TODO set_wav_volume(-1, 64); // Creo que no le mola el -1
+    //@TODO sound_set_volume(-1, 64); // Creo que no le mola el -1
     mapeado(pant);
     put(graf1, 999, 320, 170);
     bichos(pant);
     johnny(x_mono, y_mono);
-    prisionero();
-    tiempo();
-    princesa();
+    p_prisionero();
+    p_tiempo();
+    p_princesa();
     llaverosa();
     llaveverde();
     signal(type menu, s_kill);
@@ -229,18 +226,18 @@ END //PROCESS menu
 
 
 // MAPEADOR
-// ESTE PROCESO CREA UN MAPA DE PANTALLA EN BLANCO Y COLOCA LOS BLOQUES DE GRAFICOS SEG�N LEA DEL ARCHIVO DE DATOS DE PANTALLA.
-// COMO ENTRADA SOLO NECESITA EL NUMERO DE PANTALLA QUE CORRESPONDA, SIENDO '0' LA PANTALLA SUPERIOR IZQUIERDA Y NUMERANDOSE
+// ESTE PROCESO CREA UN MAPA DE PANTALLA EN BLANCO Y COLOCA LOS BLOQUES DE GRAFICOS SEGÚN LEA DEL ARCHIVO DE DATOS DE PANTALLA.
+// COMO ENTRADA SOLO NECESITA EL NÚMERO DE PANTALLA QUE CORRESPONDA, SIENDO '0' LA PANTALLA SUPERIOR IZQUIERDA Y NUMERÁNDOSE
 // EN EL SENTIDO USUAL DE LECTURA.
 
-PROCESS mapeado(Int pant)
+PROCESS mapeado(int pant)
 
 PRIVATE
 
-    x1=30;
-    y1=30;
-    puntero=0;
-    bucle;
+    int x1 = 30;
+    int y1 = 30;
+    int puntero = 0;
+    int bucle;
 
 BEGIN
 
@@ -248,7 +245,8 @@ BEGIN
     lee_mapa(pant);
     FROM bucle = 0 TO 49; //COMIENZA EL BUCLE PARA VOLCAR LOS BLOQUES GRAFICOS EN LA PANTALLA.
         IF ((lectura[puntero] > 0) AND (lectura[puntero] != 99))
-            map_put(graf1, 999, lectura[puntero], x1, y1);
+            //@WIP map_put(graf1, 999, lectura[puntero], x1, y1);
+            map_put(0, graf1, 0, lectura[puntero], x1, y1);
         END //COLOCA EL BLOQUE EN LAS COORDENADAS CORRESPONDIENTES SIEMPRE QUE NO SEA '0'
         x1 = x1 + w_bloque; //INCREMENTA LA COORDENADA HORIZONTAL PARA DIBUJAR EL PROXIMO BUCLE.
         IF (x1 > 580) //SI LLEGAMOS AL FINAL DE LA PANTALLA PONEMOS BAJAMOS UNA FILA Y RESTAURAMOS 'X' AL COMIENZO.
@@ -265,7 +263,7 @@ END //MAPEADO
 //COLOCA LA BOMBA EN PANTALLA Y LA HACE EXPLOTAR
 //ENTRADA X e Y
 
-PROCESS bomba(int x, int y)
+PROCESS p_bomba(x, y)
 
 PRIVATE
 
@@ -284,7 +282,7 @@ BEGIN
     bomba = true;
     pant_bomba = pant;
     timer[0] = 0;
-    reloj = play_wav(s_reloj, 0);
+    reloj = sound_play(s_reloj, 0);
     WHILE (timer[0] < 500)
 
        IF (pant == pant_bomba)
@@ -306,8 +304,8 @@ BEGIN
     END
 
     explosion = true;
-    stop_wav(reloj);
-    play_wav(s_explosion, 0);
+    sound_stop(reloj);
+    sound_play(s_explosion, 0);
      
     graph = 0;
     IF (pant_bomba == pant)
@@ -320,7 +318,7 @@ BEGIN
      
     IF ((pant_bomba == 126) AND (prisionero == false))
        let_me_alone();
-       play_song(m_fmuerte, 0);
+       music_play(m_fmuerte, 0);
        put(graf1, 53, 320, 170);
        put(graf1, 88, 320, 140);
        put(graf1, 87, 320, 180);
@@ -333,7 +331,7 @@ BEGIN
      
     IF ((pant_bomba == 5) AND (princesa == false))
        let_me_alone();
-       play_song(m_fmuerte, 0);
+       music_play(m_fmuerte, 0);
        put(graf1, 53, 320, 170);
        put(graf1, 95, 320, 140);
        put(graf1, 87, 320, 180);
@@ -351,7 +349,7 @@ BEGIN
     END
 
     explosion = false;
-    bomba = 0;
+    //bomba = 0;
 
     IF (pant_bomba == pant)
        bichos(pant);
@@ -359,7 +357,7 @@ BEGIN
 
     pant_bomba = 200;
     bomba = false;
-    signal(type bomba, s_kill);
+    signal(type p_bomba, s_kill);
 
 END
 
@@ -425,9 +423,9 @@ PROCESS cambio(int pant)
 
 PRIVATE
 
-    tipo;
-    xl;
-    yl;
+    int tipo;
+    int xl;
+    int yl;
 
 BEGIN
 
@@ -437,7 +435,7 @@ BEGIN
     signal(Type ciclico, s_kill);
     signal(Type arana, s_kill);
     signal(type letra, s_kill);
-    //signal(type princesa, s_kill);
+    //signal(type p_princesa, s_kill);
 
     IF ((princesa == false) AND (pant == 5))
         x1p = 2;
@@ -454,10 +452,10 @@ BEGIN
     mapeado(pant);
 
     IF ((pant == 34) AND (tesoro == false))
-        stop_wav(reloj);
-        play_song(m_tesoro, -0);
-        signal(Type bomba, s_kill);
-        signal(Type tiempo, s_sleep);
+        sound_stop(reloj);
+        music_play(m_tesoro, -0);
+        signal(type p_bomba, s_kill);
+        signal(type p_tiempo, s_sleep);
         tesoro = true;
         put(graf1, 8, 310, 370);
         put(graf1, 92, 320, 170);
@@ -467,9 +465,9 @@ BEGIN
         END
         rescatado();
         put(graf1, 53, 320, 170);
-        signal(Type tiempo, s_wakeup);
+        signal(type p_tiempo, s_wakeup);
     END
-    //princesa();
+    //p_princesa();
     put(graf1, 999, 320,170);
      
     IF ((llave_verde == false) AND (pant == 15))
@@ -537,7 +535,7 @@ BEGIN
     bichos(pant);
     frame;
     johnny(x_mono, y_mono);
-    tiempo();
+    p_tiempo();
 
 END
 
@@ -546,16 +544,16 @@ END
 //PROCESO QUE CREA LA SERPIENTE DE LA VASIJA
 //ENTRADAS X e Y
 
-PROCESS serpiente(int x, int y)
+PROCESS serpiente(int xx, int yy)
 
 PRIVATE
 
 BEGIN
 
-    canal_serpiente = play_wav(s_serpiente, 0);
+    canal_serpiente = sound_play(s_serpiente, 0);
     graph = 110;
-    x= ((x * 60) - 10);
-    y= ((y * 60) - 10);
+    x = ((xx * 60) - 10);
+    y = ((yy * 60) - 10);
     LOOP
         frame;
         frame;
@@ -564,22 +562,22 @@ BEGIN
         IF (graph == 116)
            graph = 110;
         END
-        IF (is_playing_wav(canal_serpiente) == 0)
-            canal_serpiente = play_wav(s_serpiente, 0);
+        IF (sound_is_playing(canal_serpiente) == 0)
+            canal_serpiente = sound_play(s_serpiente, 0);
         END
     END
 
 END
 
-PROCESS arana(int x, int y)
+PROCESS arana(int xx, int yy)
 
 PRIVATE
 
 BEGIN
 
     graph = 122;
-    x = ((x * 60) - 10);
-    y = ((y * 60) - 10);
+    x = ((xx * 60) - 10);
+    y = ((yy * 60) - 10);
     LOOP
         frame;
         frame;
@@ -603,7 +601,7 @@ END
 //PROCESO PARA CREAR LOS ENEMIGOS QUE SE MUEVEN SIGUENDO UN PATRON
 //ENTRADA X e Y
 
-PROCESS ciclico(int comx, int finx, int y)
+PROCESS ciclico(int comx, int finx, int yy)
 
 PRIVATE
     
@@ -614,7 +612,7 @@ BEGIN
     desp = 20;
     comx = ((comx * 60) - 10);
     finx = ((finx * 60) - 10);
-    y = ((y * 60) - 10);
+    y = ((yy * 60) - 10);
     x = comx;
     graph = 108;
     LOOP
@@ -648,13 +646,13 @@ PROCESS malo_movil(int pant, int codigo)
 
 PRIVATE
 
-    x1;
-    y1;
-    xb1;
-    cont;
-    cont2;
-    bucle;
-    codigofin;
+    int x1;
+    int y1;
+    int xb1;
+    int cont;
+    int cont2;
+    int bucle;
+    int codigofin;
 
 BEGIN
 
@@ -798,15 +796,15 @@ PRIVATE
 
 BEGIN
 
-     stop_wav(reloj);
+     sound_stop(reloj);
      //signal(Type johnny, s_kill);
      //signal(Type malo_movil, s_kill);
      //signal(Type serpiente, s_kill);
      //signal(Type ciclico, s_kill);
      //signal(Type arana, s_kill);
      let_me_alone();
-     princesa();
-     prisionero();
+     p_princesa();
+     p_prisionero();
      llaverosa();
      llaveverde();
      put(graf1, 53, 320, 170);
@@ -822,7 +820,7 @@ BEGIN
      //fin provisional
      
      put(graf1, 999, 320, 170);
-     play_wav(s_grito, 0);
+     sound_play(s_grito, 0);
      graph = 100;
      x = 320;
      y = 70;
@@ -837,7 +835,7 @@ BEGIN
         END
      END
      graph = 99;
-     play_wav(s_chapuzon, 0);
+     sound_play(s_chapuzon, 0);
      timer[2] = 0;
      WHILE (timer[2] < 150)
         frame;
@@ -859,12 +857,12 @@ BEGIN
     vidas--;
     let_me_alone();
     IF (prisionero == true)
-        prisionero();
+        p_prisionero();
     END
-    princesa();
+    p_princesa();
     bomba = false;
     pant_bomba = 200;
-    stop_wav(reloj);
+    sound_stop(reloj);
     put(graf1, 53, 320, 170);
     IF (vidas > 0)
         put(graf1, 85, 320, 170);
@@ -889,7 +887,7 @@ BEGIN
         END
 
         timer[4] = 0;
-        play_song(m_muerte, 0);
+        music_play(m_muerte, 0);
         WHILE (timer[4] < 350)
             frame;
         END
@@ -898,12 +896,12 @@ BEGIN
             llaverosa();
             llaveverde();
         END
-        prisionero();
+        p_prisionero();
         cambio (pant);
 
         signal(type muerte ,s_kill);
     ELSE
-        play_song(m_fmuerte, 0);
+        music_play(m_fmuerte, 0);
         put(graf1, 150, 530, 370);
         put(graf1, 86,320, 140);
         put(graf1, 87,320, 180);
@@ -924,10 +922,10 @@ PROCESS johnny(x1, y1)
 
 PRIVATE
 
-    cont2;
-    bucle;
-    tope_y;
-    sonidito;
+    int cont2;
+    int bucle;
+    int tope_y;
+    int sonidito; // @TODO bool?
         
 BEGIN
 
@@ -943,22 +941,22 @@ BEGIN
     LOOP
 
         IF (collision(Type malo_movil)) 
-            sonidito = play_wav(s_bocado, 0); 
+            sonidito = sound_play(s_bocado, 0); 
             muerte(); 
             break; 
         END
         IF (collision(Type serpiente)) 
-            sonidito = play_wav(s_bocado, 0); 
+            sonidito = sound_play(s_bocado, 0); 
             muerte(); 
             break; 
         END
         IF (collision(Type ciclico)) 
-            sonidito = play_wav(s_bocado, 0); 
+            sonidito = sound_play(s_bocado, 0); 
             muerte(); 
             break; 
         END
         IF (collision(Type arana)) 
-            sonidito = play_wav(s_bocado, 0); 
+            sonidito = sound_play(s_bocado, 0); 
             muerte(); 
             break; 
         END
@@ -972,7 +970,7 @@ BEGIN
         IF (key(_control) AND (bomba == false) AND (bombas > 0))
             bombas--;
             pant_bomba = pant;
-            bomba(x, y);
+            p_bomba(x, y);
         END 
 
         //fin detección objetos malignos
@@ -998,7 +996,7 @@ BEGIN
         IF ((key(_left)) AND (lectura[(cont2 - 1)] == 0) AND (x > 50))
             graph = 100;
             cont2--;
-            pasos = play_wav(s_pasos, 0);
+            pasos = sound_play(s_pasos, 0);
             FROM bucle = 1 TO 3;
                 x = x - 20;
                 IF (graph == 100)
@@ -1027,7 +1025,7 @@ BEGIN
         IF ((key(_right)) AND (lectura[(cont2 + 1)] == 0) AND (x < 570))
             graph = 102;
             cont2++;
-            pasos = play_wav(s_pasos, 0);
+            pasos = sound_play(s_pasos, 0);
             FROM bucle =1 TO 3;
                 x = x + 20;
                 IF (graph == 102)
@@ -1084,7 +1082,7 @@ BEGIN
         IF ((key(_up)) AND (lectura[(cont2 - 10)] == 0) AND (y > tope_y))
             graph = 104;
             cont2 = cont2 - 10;
-            pasos = play_wav(s_pasos, 0);
+            pasos = sound_play(s_pasos, 0);
             FROM bucle = 1 TO 3;
                 y=y-20;
                 IF (graph==104)
@@ -1133,7 +1131,7 @@ BEGIN
         IF ((key(_down)) AND (lectura[(cont2 + 10)] == 0) AND (y < 270))
             graph = 106;
             cont2 = cont2 + 10;
-            pasos = play_wav(s_pasos, 0);
+            pasos = sound_play(s_pasos, 0);
             FROM bucle = 1 TO 3;
                 y=y+20;
                 IF (graph==106)
@@ -1161,9 +1159,9 @@ PROCESS escalera(int d, int pant_dest)
 PRIVATE
 
     int bucle;
-    inc_x;
-    inc_y;
-    temporal;
+    int inc_x;
+    int inc_y;
+    int temporal;
 
 BEGIN
 
@@ -1202,12 +1200,12 @@ BEGIN
     FROM bucle = 1 TO 4;
         timer[2] = 0;
         WHILE (timer[2] < 30)
-            temporal = play_wav(s_pasos, 0);
+            temporal = sound_play(s_pasos, 0);
             frame;
         END
         x = x + inc_x;
         y = y + inc_y;
-        stop_wav(temporal);
+        sound_stop(temporal);
     END
      
     SWITCH (pant_dest)
@@ -1253,11 +1251,11 @@ END
 
 //PROCESO PRISIONERO
 
-PROCESS prisionero()
+PROCESS p_prisionero()
 
 PRIVATE
 
-    tempo;
+    int tempo;
 
 BEGIN
 
@@ -1272,7 +1270,7 @@ BEGIN
             frame;
             put(graf1, 53, 320, 170);
             put(graf1, 89,320, 170);
-            play_song(m_tesoro, 0);
+            music_play(m_tesoro, 0);
             timer[4] = 0;
             WHILE (timer[4] < 320)
                 frame;
@@ -1352,10 +1350,10 @@ PROCESS marcador(int valor, xn, yn)
 
 PRIVATE
 
-    bucle;
+    int bucle;
     string cadena;
     string v1;
-    a;
+    int a;
 
 BEGIN
 
@@ -1373,7 +1371,7 @@ END //PROCESS marcador(int valor);
 
 //proceso tiempo
 
-PROCESS tiempo()
+PROCESS p_tiempo()
 
 PRIVATE
 
@@ -1405,8 +1403,8 @@ BEGIN
 
         IF (tiempo==0)
             let_me_alone();
-            stop_wav(reloj);
-            play_song(m_fmuerte, 0);
+            sound_stop(reloj);
+            music_play(m_fmuerte, 0);
             put(graf1, 53, 320, 170);
             put(graf1, 91,320, 140);
             put(graf1, 87,320, 180);
@@ -1427,7 +1425,7 @@ PROCESS cocodrilo(int sprite, int x1)
 
 PRIVATE
 
-    aleatorio;
+    int aleatorio;
 
 BEGIN
 
@@ -1447,13 +1445,13 @@ BEGIN
 END
 
 
-PROCESS princesa()
+PROCESS p_princesa()
 
 PRIVATE
 
-    tempo;
-    cont;
-    bucle;
+    int tempo;
+    int cont;
+    int bucle;
  
 BEGIN
 
@@ -1474,12 +1472,12 @@ BEGIN
             let_me_alone();
             put(graf1, 53, 320, 170);
             put(graf1, 94,320, 170);
-            play_song(m_tesoro, 0);
+            music_play(m_tesoro, 0);
             timer[4] = 0;
             WHILE (timer[4] < 320)
                 frame;
             END
-            prisionero();
+            p_prisionero();
             rescatado();
             cambio(pant);
         END
@@ -1587,8 +1585,8 @@ PROCESS llaverosa()
 
 PRIVATE
 
-    tempo;
-    sonido;
+    int tempo;
+    int sonido;
 
 BEGIN
 
@@ -1596,7 +1594,7 @@ BEGIN
 
         IF (collision(Type johnny))
             llave_rosa = true;
-            sonido = play_song(m_premio, 0);
+            sonido = music_play(m_premio, 0);
             graph = 99;
         END
 
@@ -1642,8 +1640,8 @@ PROCESS llaveverde()
 
 PRIVATE
 
-    tempo;
-    sonido;
+    int tempo;
+    int sonido;
 
 BEGIN
 
@@ -1651,7 +1649,7 @@ BEGIN
 
         IF (collision(Type johnny))
             llave_verde = true;
-            sonido = play_song(m_premio, 0);
+            sonido = music_play(m_premio, 0);
             graph = 99;
         END
 
@@ -1696,24 +1694,24 @@ PROCESS escape(int tipo)
 
 PRIVATE
 
-    opcion = 0;
+    int opcion = 0;
 
 BEGIN
         
     signal(type johnny, s_freeze);
-    signal(type bomba, s_freeze);
+    signal(type p_bomba, s_freeze);
     signal(type malo_movil, s_freeze);
     signal(type ciclico, s_freeze);
     signal(type serpiente, s_freeze);
     signal(type arana, s_freeze);
-    signal(type prisionero, s_freeze);
-    signal(type princesa, s_freeze);
-    signal(type tiempo, s_freeze);
+    signal(type p_prisionero, s_freeze);
+    signal(type p_princesa, s_freeze);
+    signal(type p_tiempo, s_freeze);
     signal(type llaveverde, s_freeze);
     signal(type llaverosa, s_freeze);
     signal(type banner, s_freeze);
-    pause_wav(canal_serpiente);
-    pause_wav(reloj);
+    sound_stop(canal_serpiente);
+    sound_stop(reloj);
         
         
     LOOP
@@ -1739,18 +1737,18 @@ BEGIN
                         frame;
                     END
                     signal(type johnny, s_wakeup);
-                    signal(type bomba, s_wakeup);
+                    signal(type p_bomba, s_wakeup);
                     signal(type malo_movil, s_wakeup);
                     signal(type ciclico, s_wakeup);
                     signal(type serpiente, s_wakeup);
                     signal(type arana, s_wakeup);
-                    signal(type prisionero, s_wakeup);
-                    signal(type princesa, s_wakeup);
-                    signal(type tiempo, s_wakeup);
+                    signal(type p_prisionero, s_wakeup);
+                    signal(type p_princesa, s_wakeup);
+                    signal(type p_tiempo, s_wakeup);
                     signal(type llaveverde, s_wakeup);
                     signal(type llaverosa, s_wakeup);
-                    resume_wav(reloj);
-                    resume_wav(canal_serpiente);
+                    sound_play(reloj);
+                    sound_play(canal_serpiente);
                     signal(type escape, s_kill);
                 END
                 IF ((key(_control)) AND (opcion == 1))
@@ -1760,7 +1758,7 @@ BEGIN
             END //CASE 0:
 
             CASE 1:
-                pause_song();
+                music_pause();
                 x = 320;
                 y = 220;
                 IF (opcion == 0)
@@ -1781,7 +1779,7 @@ BEGIN
                     signal(type serpiente, s_wakeup);
                     signal(type arana, s_wakeup);
                     signal(type banner, s_wakeup);
-                    resume_song();
+                    music_resume();
                     signal(type escape, s_kill);
                 END
                 IF ((key(_control)) AND (opcion == 1))
@@ -1814,25 +1812,25 @@ BEGIN
         signal(type johnny, s_kill);
         signal(type arana, s_kill);
         signal(type serpiente, s_kill);
-        signal(type bomba, s_sleep);
-        signal(type prisionero, s_freeze);
-        pause_wav(reloj);
-        signal(type tiempo, s_freeze);
+        signal(type p_bomba, s_sleep);
+        signal(type p_prisionero, s_freeze);
+        sound_stop(reloj);
+        signal(type p_tiempo, s_freeze);
         signal(type malo_movil, s_kill);
         signal(type ciclico, s_kill);
         put(graf1, 53, 320, 170);
         put(graf1, 169, 320, 140);
         put(graf1, 170, 320, 180);
-        play_song(m_tesoro, 0);
+        music_play(m_tesoro, 0);
         timer[4] = 0;
         WHILE (timer[4] < 320)
             frame;
         END
-        signal(type bomba, s_wakeup);
-        resume_wav(reloj);
-        signal(type tiempo, s_wakeup);
-        signal(type prisionero, s_wakeup);
-        princesa();
+        signal(type p_bomba, s_wakeup);
+        sound_play(reloj);
+        signal(type p_tiempo, s_wakeup);
+        signal(type p_prisionero, s_wakeup);
+        p_princesa();
         pant_bomba = 200;
         cambio(pant);
     END
@@ -1846,7 +1844,7 @@ PROCESS letra(int tipo, int x1, int y1)
 
 PRIVATE
 
-    sonido;
+    int sonido;
 
 BEGIN
 
@@ -1875,7 +1873,7 @@ BEGIN
                             baba7 = true; 
                         END
                         put(graf1,165, 110, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1892,7 +1890,7 @@ BEGIN
                             baba7 = true; 
                         END
                         put(graf1, 165, 230, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1909,7 +1907,7 @@ BEGIN
                             baba7 = true; 
                         END
                         put(graf1, 165, 470, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1930,7 +1928,7 @@ BEGIN
                             baba8 = true; 
                         END
                         put(graf1, 166, 170, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1947,7 +1945,7 @@ BEGIN
                             baba8 = true; 
                         END
                         put(graf1, 166, 290, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END //IF (babal4 == false)
 
@@ -1955,9 +1953,9 @@ BEGIN
                         babaliba++;
                         babal8 = true;
                         put(graf1, 166, 530, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         let_me_alone();
-                        stop_wav(reloj);
+                        sound_stop(reloj);
                         graph = 99;
                         x = 1000;
                         y = 1000;
@@ -1966,9 +1964,9 @@ BEGIN
                         put(graf1, 171, 320, 140);
                         marcador((2000 - tiempo), 280, 180);
                         put(graf1, 172, 320, 220);
-                        princesa();
-                        prisionero();
-                        play_song(m_fbien, 0);
+                        p_princesa();
+                        p_prisionero();
+                        music_play(m_fbien, 0);
                         timer[4] = 0;
                         WHILE (timer[4] < 1200)
                             frame;
@@ -1984,7 +1982,7 @@ BEGIN
                         babal5 = true;
                         baba5 = true;
                         put(graf1, 167, 350, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
                 END
@@ -1996,7 +1994,7 @@ BEGIN
                         babal6 = true;
                         baba6 = true;
                         put(graf1, 168, 410, 450);
-                        sonido = play_song(m_premio, 0);
+                        sonido = music_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
                 END
