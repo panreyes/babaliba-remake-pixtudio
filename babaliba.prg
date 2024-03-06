@@ -385,8 +385,7 @@ BEGIN
         SWITCH (lectura_bichos[bucle])
 
             CASE 201:
-                malo_movil(pant, pant);
-                //malo_movil(pant, (lectura_bichos[(bucle + 1)]));
+                malo_movil(pant, (lectura_bichos[(bucle + 1)]));
                 bucle = bucle + 1;
             END
 
