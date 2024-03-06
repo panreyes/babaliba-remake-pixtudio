@@ -189,7 +189,7 @@ BEGIN
     sound_stop(canal_serpiente);
     arana(10, 2);
     LOOP
-        IF (key(_space)) 
+        IF (key(_space))
             clear_screen(); 
             music_stop(); 
             sound_stop(canal_serpiente); 
@@ -1770,6 +1770,7 @@ BEGIN
 
             CASE 1:
                 music_pause();
+                signal(type menu, s_freeze);
                 x = 320;
                 y = 220;
                 IF (opcion == 0)
@@ -1790,6 +1791,7 @@ BEGIN
                     signal(type serpiente, s_wakeup);
                     signal(type arana, s_wakeup);
                     signal(type banner, s_wakeup);
+                    signal(type menu, s_wakeup);
                     music_resume();
                     signal(type escape, s_kill);
                 END
