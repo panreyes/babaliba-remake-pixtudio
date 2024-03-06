@@ -66,8 +66,8 @@ GLOBAL
     bool explosion; //si explosion true
     int tiempo;
     int graf1; // fichero
-    Byte lectura[49];
-    int lectura_bichos[5]; //Byte lectura_bichos[5];
+    byte lectura[49];
+    byte lectura_bichos[5]; //Byte lectura_bichos[5];
     int x_mono;
     int y_mono;
     bool llave_verde;
@@ -212,7 +212,7 @@ BEGIN
     put(graf1, 152, 380, 370);
     //@TODO sound_set_volume(-1, 64); // Creo que no le mola el -1
     mapeado(pant);
-    put(graf1, 999, 320, 170);
+    put(graf1, 999, 320, 170); // Este put vuelca el mapa completo en la pantalla
     bichos(pant);
     johnny(x_mono, y_mono);
     p_prisionero();
@@ -245,8 +245,7 @@ BEGIN
     lee_mapa(pant);
     FROM bucle = 0 TO 49; //COMIENZA EL BUCLE PARA VOLCAR LOS BLOQUES GRAFICOS EN LA PANTALLA.
         IF ((lectura[puntero] > 0) AND (lectura[puntero] != 99))
-            //@WIP map_put(graf1, 999, lectura[puntero], x1, y1);
-            map_put(graf1, 999, graf1, lectura[puntero], x1, y1);
+            map_put(graf1, 999, graf1, lectura[puntero], x1, y1); // era map_put(graf1, 999, lectura[puntero], x1, y1);
         END //COLOCA EL BLOQUE EN LAS COORDENADAS CORRESPONDIENTES SIEMPRE QUE NO SEA '0'
         x1 = x1 + w_bloque; //INCREMENTA LA COORDENADA HORIZONTAL PARA DIBUJAR EL PROXIMO BUCLE.
         IF (x1 > 580) //SI LLEGAMOS AL FINAL DE LA PANTALLA PONEMOS BAJAMOS UNA FILA Y RESTAURAMOS 'X' AL COMIENZO.
@@ -600,17 +599,19 @@ END
 //PROCESO PARA CREAR LOS ENEMIGOS QUE SE MUEVEN SIGUENDO UN PATRON
 //ENTRADA X e Y
 
-PROCESS ciclico(int comx, int finx, int yy)
+PROCESS ciclico(byte comxx, byte finxx, byte yy)
 
 PRIVATE
     
     int desp;
+    int comx;
+    int finx;
 
 BEGIN
 
     desp = 20;
-    comx = ((comx * 60) - 10);
-    finx = ((finx * 60) - 10);
+    comx = ((comxx * 60) - 10);
+    finx = ((finxx * 60) - 10);
     y = ((yy * 60) - 10);
     x = comx;
     graph = 108;
@@ -641,7 +642,7 @@ END
 //ENEMIGOS MOVILES
 //PROCESO PARA CREAR LOS ENEMIGOS QUE SE MUEVEN ALEATORIAMENTE POR LA PANTALLA
 
-PROCESS malo_movil(int pant, int codigo)
+PROCESS malo_movil(int pant, byte codigo_b)
 
 PRIVATE
 
@@ -652,9 +653,11 @@ PRIVATE
     int cont2;
     int bucle;
     int codigofin;
+    int codigo;
 
 BEGIN
 
+    codigo = codigo_b;
     codigo = rand(1, 3);
     IF (codigo == 1)
         codigo = 108;
@@ -961,7 +964,7 @@ BEGIN
         END
 
         IF (key(_esc))
-            escape(0); 
+            escape(0);
         END
 
         //BOMBA
