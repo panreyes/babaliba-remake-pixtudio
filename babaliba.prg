@@ -1387,7 +1387,7 @@ BEGIN
         tiempo--;
 
         IF (tiempo > 999)
-            marcador (tiempo, 50, 380);
+            marcador(tiempo, 50, 380);
         END
 
         IF ((tiempo < 1000) AND (tiempo > 99))
@@ -1400,7 +1400,7 @@ BEGIN
             marcador(tiempo, 90, 380);
         END
 
-        IF (tiempo==0)
+        IF (tiempo == 0)
             let_me_alone();
             sound_stop(reloj);
             music_play(m_fmuerte, 0);
