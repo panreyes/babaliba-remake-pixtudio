@@ -1380,7 +1380,7 @@ PRIVATE
 
 BEGIN
 
-    marcador(tiempo, 50, 380);
+    //marcador(tiempo, 50, 380);
     LOOP
 
         timer[7] = 0;
@@ -1399,12 +1399,20 @@ BEGIN
             marcador(tiempo, 70, 380);
         END
 
-        IF (tiempo < 100)
+        IF ((tiempo < 100) AND (tiempo > 9))
+            put(graf1, 150, 50, 380);
             put(graf1, 150, 70, 380);
             marcador(tiempo, 90, 380);
         END
 
-        IF (tiempo == 0)
+        IF (tiempo < 10)
+            put(graf1, 150, 50, 380);
+            put(graf1, 150, 70, 380);
+            put(graf1, 150, 90, 380);
+            marcador(tiempo, 110, 380);
+        END
+
+        IF (tiempo <= 0)
             let_me_alone();
             sound_stop(reloj);
             music_play(m_fmuerte, 0);
