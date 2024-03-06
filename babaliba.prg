@@ -1721,8 +1721,8 @@ BEGIN
     signal(type llaveverde, s_freeze);
     signal(type llaverosa, s_freeze);
     signal(type banner, s_freeze);
-    sound_stop(canal_serpiente);
-    sound_stop(reloj);
+    //sound_stop(canal_serpiente);
+    //sound_stop(reloj);
         
         
     LOOP
@@ -1758,8 +1758,8 @@ BEGIN
                     signal(type p_tiempo, s_wakeup);
                     signal(type llaveverde, s_wakeup);
                     signal(type llaverosa, s_wakeup);
-                    sound_play(reloj);
-                    sound_play(canal_serpiente);
+                    //sound_play(reloj);
+                    //sound_play(canal_serpiente);
                     signal(type escape, s_kill);
                 END
                 IF ((key(_control)) AND (opcion == 1))
