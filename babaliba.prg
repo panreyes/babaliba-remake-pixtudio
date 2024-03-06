@@ -67,7 +67,7 @@ GLOBAL
     int tiempo;
     int graf1; // fichero
     byte lectura[49];
-    byte lectura_bichos[5]; //Byte lectura_bichos[5];
+    byte lectura_bichos[5];
     int x_mono;
     int y_mono;
     bool llave_verde;
@@ -220,6 +220,7 @@ BEGIN
     p_princesa();
     llaverosa();
     llaveverde();
+    
     signal(type menu, s_kill);
 
 END //PROCESS menu
@@ -1361,8 +1362,8 @@ BEGIN
 
     cadena = itoa(valor);
     a = len(cadena);
-    FROM bucle = 0 TO len(cadena) - 1;
-        v1 = substr(cadena, bucle, bucle);
+    FROM bucle = 0 TO (len(cadena) - 1);
+        v1 = substr(cadena, bucle, 1);
         put(graf1, (asc (v1) + 102), xn, yn);
         xn = xn + 20;
         a--;
