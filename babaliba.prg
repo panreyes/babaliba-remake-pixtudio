@@ -6,11 +6,11 @@
 // Adaptación código BennuGD: Federico J. Álvarez Valero
 // -----------------------------------------------------
 
-#define clear_screen() \
-    map_clear(0, background.graph)
-
-#define put(f, g, x, y) \
-    map_put(0, background.graph, f, g, x, y)
+#define init_bgd1_background_emulation() background.file = 0; background.graph = map_new(640,480)
+#define put_screen(f,g) map_clear(0, background.graph ); map_put(0, background.graph, f, g, 320, 240)
+#define clear_screen() map_clear(0, background.graph )
+#define put( f, g, x, y ) map_put(0, background.graph, f, g, x, y)
+#define map_xput(fdst,gdst,gsrc,x,y,angle,size,flags) map_put(fdst, gdst, fdst, gsrc, x, y, angle, size, size, flags, 255, 255, 255, 255)
 
 PROGRAM Babaliba;
 
@@ -100,8 +100,8 @@ GLOBAL
 BEGIN
 
     set_mode(640, 480, MODE_WINDOW); //@TODO MODE_FULLSCREEN
-
     window_set_title("Babaliba Remake");
+    init_bgd1_background_emulation();
     set_fps(30, 4);
     channel_set_volume(-1, 64);
     music_set_volume(64);
@@ -246,7 +246,7 @@ BEGIN
     FROM bucle = 0 TO 49; //COMIENZA EL BUCLE PARA VOLCAR LOS BLOQUES GRAFICOS EN LA PANTALLA.
         IF ((lectura[puntero] > 0) AND (lectura[puntero] != 99))
             //@WIP map_put(graf1, 999, lectura[puntero], x1, y1);
-            map_put(0, graf1, 0, lectura[puntero], x1, y1);
+            map_put(graf1, 999, graf1, lectura[puntero], x1, y1);
         END //COLOCA EL BLOQUE EN LAS COORDENADAS CORRESPONDIENTES SIEMPRE QUE NO SEA '0'
         x1 = x1 + w_bloque; //INCREMENTA LA COORDENADA HORIZONTAL PARA DIBUJAR EL PROXIMO BUCLE.
         IF (x1 > 580) //SI LLEGAMOS AL FINAL DE LA PANTALLA PONEMOS BAJAMOS UNA FILA Y RESTAURAMOS 'X' AL COMIENZO.
