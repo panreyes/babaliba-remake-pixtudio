@@ -1,0 +1,10 @@
+{
+    "title": "Babaliba",
+    "background": "background.png",
+    "icon": "Babaliba.app/Contents/Resources/Babaliba.icns",
+    "icon-size": 80,
+    "contents": [
+        { "x": 10, "y": 10, "type": "file", "path": "Babaliba.app" },
+        { "x": 200, "y": 10, "type": "link", "path": "/Applications" }
+    ]
+}
