@@ -184,7 +184,7 @@ BEGIN
     put(graf1, 2, 50, 230);
     put(graf1, 79, 590, 50);
     banner();
-    //@TODO sound_set_volume(-1, 0); // Creo que no le mola el -1
+    set_all_sounds_volume(0); //sound_set_volume(-1, 0)
     serpiente(1, 3);
     sound_stop(canal_serpiente);
     arana(10, 2);
@@ -210,7 +210,7 @@ BEGIN
     put(graf1, 155, 530, 370);
     put(graf1, 150, 400, 370);
     put(graf1, 152, 380, 370);
-    //@TODO sound_set_volume(-1, 64); // Creo que no le mola el -1
+    set_all_sounds_volume(64); // sound_set_volume(-1, 64); 
     mapeado(pant);
     put(graf1, 999, 320, 170); // Este put vuelca el mapa completo en la pantalla
     bichos(pant);
@@ -1721,8 +1721,8 @@ BEGIN
     signal(type llaveverde, s_freeze);
     signal(type llaverosa, s_freeze);
     signal(type banner, s_freeze);
-    //sound_stop(canal_serpiente);
-    //sound_stop(reloj);
+    sound_stop(canal_serpiente);
+    sound_stop(reloj);
         
         
     LOOP
@@ -1758,8 +1758,8 @@ BEGIN
                     signal(type p_tiempo, s_wakeup);
                     signal(type llaveverde, s_wakeup);
                     signal(type llaverosa, s_wakeup);
-                    //sound_play(reloj);
-                    //sound_play(canal_serpiente);
+                    sound_play(reloj);
+                    sound_play(canal_serpiente);
                     signal(type escape, s_kill);
                 END
                 IF ((key(_control)) AND (opcion == 1))
@@ -2018,4 +2018,18 @@ BEGIN
 
     END
         
+END
+
+PROCESS set_all_sounds_volume(int volume)
+
+BEGIN
+
+    sound_set_volume(s_explosion, volume);
+    sound_set_volume(s_reloj, volume);
+    sound_set_volume(s_serpiente, volume);
+    sound_set_volume(s_chapuzon, volume);
+    sound_set_volume(s_grito, volume);
+    sound_set_volume(s_pasos, volume);
+    sound_set_volume(s_bocado, volume);
+
 END
