@@ -105,9 +105,9 @@ BEGIN
     set_fps(30, 4);
     channel_set_volume(-1, 64);
     music_set_volume(64);
-    graf1 = fpg_load("graf01.fpg");
-    file_data = fopen("datos_mapa.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE EL MAPEADO
-    bicho_data = fopen("datos_bichos.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE LOS BICHOS
+    graf1 = fpg_load("gfx/graf01.fpg");
+    file_data = fopen("data/datos_mapa.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE EL MAPEADO
+    bicho_data = fopen("data/datos_bichos.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE LOS BICHOS
 
     //sonidos
 
