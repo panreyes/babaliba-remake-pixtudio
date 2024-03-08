@@ -99,7 +99,7 @@ GLOBAL
 
 BEGIN
 
-    set_mode(640, 480, MODE_WINDOW); //@TODO MODE_FULLSCREEN
+    set_mode(640, 480, MODE_FULLSCREEN);
     window_set_title("Babaliba Remake");
     init_bgd1_background_emulation();
     set_fps(30, 4);
