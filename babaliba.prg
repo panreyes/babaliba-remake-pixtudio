@@ -11,6 +11,7 @@
 #define clear_screen() map_clear(0, background.graph )
 #define put( f, g, x, y ) map_put(0, background.graph, f, g, x, y)
 #define map_xput(fdst,gdst,gsrc,x,y,angle,size,flags) map_put(fdst, gdst, fdst, gsrc, x, y, angle, size, size, flags, 255, 255, 255, 255)
+#define xput(f,g,x,y,angle,size,flags,region) map_put(0, background.graph, f, g, x, y, angle, size, size, flags, 255, 255, 255, 255)
 
 PROGRAM Babaliba;
 
@@ -99,7 +100,7 @@ GLOBAL
 
 BEGIN
 
-    set_mode(640, 480, MODE_FULLSCREEN);
+    set_mode(640, 480, MODE_WINDOW);
     window_set_title("Babaliba Remake");
     init_bgd1_background_emulation();
     set_fps(30, 4);
@@ -126,7 +127,7 @@ BEGIN
     m_fbien = music_load("sound/fin_bien.ogg");
     m_premio = music_load("sound/premio.ogg");
 
-    menu();
+    splash();
 
 END
 
@@ -2031,5 +2032,27 @@ BEGIN
     sound_set_volume(s_grito, volume);
     sound_set_volume(s_pasos, volume);
     sound_set_volume(s_bocado, volume);
+
+END
+
+PROCESS splash()
+
+PRIVATE
+
+    int splashScreen;
+
+BEGIN
+
+    region_define(1, 0, 0, 640, 480);
+    splashScreen = map_load("splash.png");
+    xput(file, splashScreen, 320, 240, 0, 100, 0, region);
+    frame(5000);
+    fade_off(1000);
+    WHILE (fade_info.fading)
+        frame; 
+    END
+    clear_screen();
+    fade_on(0);
+    menu();
 
 END
