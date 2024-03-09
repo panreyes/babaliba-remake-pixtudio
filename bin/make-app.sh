@@ -15,12 +15,16 @@ bin/compile.sh
 
 rm -rf ${APPBUNDLE}
 mkdir -p ${APPBUNDLE}/Contents
+mkdir -p ${APPBUNDLE}/Contents/MacOS/
 cp -r templates/app/* ${APPBUNDLE}/
 cp bennugd/bgdi.app/Contents/MacOS/* ${APPBUNDLE}/Contents/MacOS/
 cp -r build/babaliba.dcb ${APPBUNDLE}/Contents/MacOS/
 cp -r src/data ${APPBUNDLE}/Contents/MacOS/
 cp -r src/gfx ${APPBUNDLE}/Contents/MacOS/
 cp -r src/sound ${APPBUNDLE}/Contents/MacOS/
+cp assets/Info.plist ${APPBUNDLE}/Contents/Info.plist
+cp assets/Babaliba ${APPBUNDLE}/Contents/MacOS/Babaliba
+chmod +x ${APPBUNDLE}/Contents/MacOS/Babaliba
 
 # Iconos
 

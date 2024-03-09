@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>Babaliba</string>
     <key>CFBundleGetInfoString</key>
-    <string>1.0.0, Copyright 1984 Dinamic Software - 2004 Compiler Software</string>
+    <string>1.1.0, Copyright 1984 Dinamic Software - 2004-2024 Compiler Software</string>
     <key>CFBundleIconFile</key>
     <string>Babaliba.icns</string>
     <key>CFBundleIdentifier</key>
@@ -20,13 +20,13 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.1.0</string>
     <key>CFBundleSignature</key>
     <string>Babaliba</string>
     <key>CFBundleVersion</key>
-    <string>1.0.0</string>
+    <string>1.1.0</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright 1984 Dinamic Software - 2004 Compiler Software</string>
+    <string>Copyright 1984 Dinamic Software - 2004-2024 Compiler Software</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.7.0</string>
 </dict>
