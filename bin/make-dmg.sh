@@ -9,11 +9,11 @@ rm build/Babaliba.dmg
 # create files
 cp assets/babaliba.json build/
 cp assets/background.png build/
+cp -r assets/README.rtfd build/
 cd build/
 appdmg babaliba.json Babaliba.dmg
 
 # remove temp files
 rm babaliba.json
 rm background.png
-rm README.txt
-rm -rf Licenses
+rm -r README.rtfd

@@ -36,5 +36,6 @@ sips -z 256 256   assets/${APPNAME}Icon.png --out ${APPNAME}.iconset/icon_256x25
 sips -z 512 512   assets/${APPNAME}Icon.png --out ${APPNAME}.iconset/icon_256x256@2x.png
 sips -z 512 512   assets/${APPNAME}Icon.png --out ${APPNAME}.iconset/icon_512x512.png
 cp assets/${APPNAME}Icon.png ${APPNAME}.iconset/icon_512x512@2x.png
+mkdir -p ${APPBUNDLE}/Contents/Resources
 iconutil -c icns -o ${APPBUNDLE}/Contents/Resources/${APPNAME}.icns ${APPNAME}.iconset
 rm -r ${APPNAME}.iconset
