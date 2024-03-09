@@ -21,6 +21,8 @@ IMPORT "mod_sound"
 IMPORT "mod_misc"
 IMPORT "mod_debug"
 
+#include "jkey.lib"
+
 CONST
 
     pant_inicio = 74;
@@ -95,15 +97,19 @@ GLOBAL
     int canal_serpiente;
     int reloj;
     int pasos;
+
+    // Control pantalla completa o ventana
+    bool full_screen = true;
         
 // COMIENZO DEL PROGRAMA
 
 BEGIN
 
-    set_mode(640, 480, MODE_WINDOW);
+    set_mode(640, 480, MODE_FULLSCREEN);
     window_set_title("Babaliba Remake");
     init_bgd1_background_emulation();
     set_fps(30, 4);
+    lee_joystick();
     channel_set_volume(-1, 64);
     music_set_volume(64);
     graf1 = fpg_load("gfx/graf01.fpg");
@@ -190,16 +196,20 @@ BEGIN
     sound_stop(canal_serpiente);
     arana(10, 2);
     LOOP
-        IF (key(_space))
+        lee_joystick();
+        IF (key(_space) || jkeys_state[_JKEY_SELECT])
             clear_screen(); 
             music_stop(); 
             sound_stop(canal_serpiente); 
             signal(type banner, s_kill); 
             signal(type serpiente, s_kill); 
             signal(type arana, s_kill); 
+            WHILE (jkeys_state[_JKEY_SELECT])
+                frame;
+            END
             break; 
         END
-        IF (key(_esc)) 
+        IF (key(_esc) || jkeys_state[_JKEY_MENU]) 
             escape(1);
         END
         frame;
@@ -944,6 +954,8 @@ BEGIN
     
     LOOP
 
+        lee_joystick();
+
         IF (collision(Type malo_movil)) 
             sonidito = sound_play(s_bocado, 0); 
             muerte(); 
@@ -965,27 +977,29 @@ BEGIN
             break; 
         END
 
-        IF (key(_esc))
+        IF (key(_esc) || jkeys_state[_JKEY_SELECT])
             escape(0);
         END
 
         //BOMBA
 
-        IF (key(_control) AND (bomba == false) AND (bombas > 0))
-            bombas--;
-            pant_bomba = pant;
-            p_bomba(x, y);
+        IF (key(_control) || jkeys_state[_JKEY_A])
+            IF ((bomba == false) AND (bombas > 0))
+                bombas--;
+                pant_bomba = pant;
+                p_bomba(x, y);
+            END
         END 
 
         //fin detección objetos malignos
 
         // Cambio de pantalla a la izquierda.
 
-        IF ((key(_left)) AND (x < 60) AND (pant == 123))
+        IF ((key(_left) || jkeys_state[_JKEY_LEFT]) AND (x < 60) AND (pant == 123))
             escalera(0, 83);
         END
 
-        IF ((key(_left)) AND (x < 60)) //IF cambio de pantalla
+        IF ((key(_left) || jkeys_state[_JKEY_LEFT]) AND (x < 60)) //IF cambio de pantalla
             pant--;
             x_mono = 9;
             y_mono = (y / 60);
@@ -993,11 +1007,11 @@ BEGIN
         END
 
         //detecta foso
-        IF ((key(_left)) AND (lectura[cont2 - 1] == 50))
+        IF ((key(_left) || jkeys_state[_JKEY_LEFT]) AND (lectura[cont2 - 1] == 50))
             foso();
         END
 
-        IF ((key(_left)) AND (lectura[(cont2 - 1)] == 0) AND (x > 50))
+        IF ((key(_left) || jkeys_state[_JKEY_LEFT]) AND (lectura[(cont2 - 1)] == 0) AND (x > 50))
             graph = 100;
             cont2--;
             pasos = sound_play(s_pasos, 0);
@@ -1013,7 +1027,7 @@ BEGIN
         END
 
         // Cambio de pantalla a la derecha.
-        IF ((key(_right)) AND (x > 570)) //IF cambio de pantalla
+        IF ((key(_right) || jkeys_state[_JKEY_RIGHT]) AND (x > 570)) //IF cambio de pantalla
             pant++;
             x_mono = 0;
             y_mono = (y / 60);
@@ -1021,12 +1035,12 @@ BEGIN
         END
 
         //detecta foso
-        IF ((key(_right)) AND (lectura[cont2 + 1] == 50))
+        IF ((key(_right) || jkeys_state[_JKEY_RIGHT]) AND (lectura[cont2 + 1] == 50))
             foso();
         END
 
 
-        IF ((key(_right)) AND (lectura[(cont2 + 1)] == 0) AND (x < 570))
+        IF ((key(_right) || jkeys_state[_JKEY_RIGHT]) AND (lectura[(cont2 + 1)] == 0) AND (x < 570))
             graph = 102;
             cont2++;
             pasos = sound_play(s_pasos, 0);
@@ -1052,26 +1066,26 @@ BEGIN
 
 
         // Cambio de pantalla arriba.
-        IF ((key(_up)) AND (lectura[(cont2 - 10)] == 29 OR (lectura[(cont2 - 10)] == 44)))
+        IF ((key(_up) || jkeys_state[_JKEY_UP]) AND (lectura[(cont2 - 10)] == 29 OR (lectura[(cont2 - 10)] == 44)))
             pant = pant - 15;
             x_mono=(x / 60);
             y_mono = 4;
             cambio(pant);
         END
 
-        IF ((key(_up)) AND (y < 60) AND (pant == 55))
+        IF ((key(_up) || jkeys_state[_JKEY_UP]) AND (y < 60) AND (pant == 55))
             escalera(0, 32);
         END
 
-        IF ((key(_up)) AND (y < 60) AND (pant == 32))
+        IF ((key(_up) || jkeys_state[_JKEY_UP]) AND (y < 60) AND (pant == 32))
             escalera(1, 55);
         END
 
-        IF ((key(_up)) AND (y < 60) AND (pant == 65))
+        IF ((key(_up || jkeys_state[_JKEY_UP])) AND (y < 60) AND (pant == 65))
             escalera(1, 105);
         END
 
-        IF ((key(_up)) AND (y < 60)) //IF cambio de pantalla
+        IF ((key(_up) || jkeys_state[_JKEY_UP]) AND (y < 60)) //IF cambio de pantalla
             pant = pant - 15;
             x_mono = (x / 60);
             y_mono = 4;
@@ -1079,11 +1093,11 @@ BEGIN
         END
 
         //detecta foso
-        IF ((key(_up)) AND (lectura[cont2 - 10] == 50))
+        IF ((key(_up) || jkeys_state[_JKEY_UP]) AND (lectura[cont2 - 10] == 50))
             foso();
         END
 
-        IF ((key(_up)) AND (lectura[(cont2 - 10)] == 0) AND (y > tope_y))
+        IF ((key(_up) || jkeys_state[_JKEY_UP]) AND (lectura[(cont2 - 10)] == 0) AND (y > tope_y))
             graph = 104;
             cont2 = cont2 - 10;
             pasos = sound_play(s_pasos, 0);
@@ -1100,23 +1114,23 @@ BEGIN
 
         // Cambio de pantalla abajo.
 
-        IF ((key(_down)) AND (y > 270) AND (pant == 83))
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (y > 270) AND (pant == 83))
             escalera(1, 123);
         END
 
-        IF ((key(_down)) AND (y > 270) AND (pant == 105))
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (y > 270) AND (pant == 105))
             escalera(0, 65);
         END
 
-        IF ((key(_down)) AND (y > 270) AND (pant == 93))
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (y > 270) AND (pant == 93))
             escalera(0, 96);
         END
 
-        IF ((key(_down)) AND (y > 270) AND (pant == 96))
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (y > 270) AND (pant == 96))
             escalera(1, 93);
         END
 
-        IF ((key(_down)) AND (y > 270)) //IF cambio de pantalla
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (y > 270)) //IF cambio de pantalla
             pant = pant + 15;
             x_mono = (x / 60);
             y_mono = 0;
@@ -1127,12 +1141,12 @@ BEGIN
         END
 
         //detecta foso
-        IF ((key(_down)) AND (lectura[cont2 + 10] == 50))
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (lectura[cont2 + 10] == 50))
             foso();
         END
 
 
-        IF ((key(_down)) AND (lectura[(cont2 + 10)] == 0) AND (y < 270))
+        IF ((key(_down) || jkeys_state[_JKEY_DOWN]) AND (lectura[(cont2 + 10)] == 0) AND (y < 270))
             graph = 106;
             cont2 = cont2 + 10;
             pasos = sound_play(s_pasos, 0);
@@ -1738,14 +1752,14 @@ BEGIN
                 ELSE
                     graph = 161;
                 END
-                IF ((key(_left)) AND (opcion == 0))
+                IF ((key(_left) || jkeys_state[_JKEY_LEFT]) AND (opcion == 0))
                     opcion = 1;
                 END
-                IF ((key(_right)) AND (opcion == 1))
+                IF ((key(_right) || jkeys_state[_JKEY_RIGHT]) AND (opcion == 1))
                     opcion = 0;
                 END
-                IF ((key(_control)) AND (opcion == 0))
-                    WHILE (key(_control))
+                IF ((key(_control) || jkeys_state[_JKEY_A]) AND (opcion == 0))
+                    WHILE (key(_control) || jkeys_state[_JKEY_A])
                         frame;
                     END
                     signal(type johnny, s_wakeup);
@@ -1763,7 +1777,7 @@ BEGIN
                     sound_play(canal_serpiente);
                     signal(type escape, s_kill);
                 END
-                IF ((key(_control)) AND (opcion == 1))
+                IF ((key(_control) || jkeys_state[_JKEY_A]) AND (opcion == 1))
                     menu();
                 END
             
@@ -1779,14 +1793,14 @@ BEGIN
                 ELSE
                     graph = 163;
                 END
-                IF ((key(_left)) AND (opcion == 0))
+                IF ((key(_left) || jkeys_state[_JKEY_LEFT]) AND (opcion == 0))
                     opcion = 1;
                 END
-                IF ((key(_right)) AND (opcion == 1))
+                IF ((key(_right) || jkeys_state[_JKEY_RIGHT]) AND (opcion == 1))
                     opcion = 0;
                 END
-                IF ((key(_control)) AND (opcion == 0))
-                    WHILE (key(_control))
+                IF ((key(_control) || jkeys_state[_JKEY_A]) AND (opcion == 0))
+                    WHILE (key(_control) || jkeys_state[_JKEY_A])
                         frame;
                     END
                     signal(type serpiente, s_wakeup);
@@ -1796,7 +1810,7 @@ BEGIN
                     music_resume();
                     signal(type escape, s_kill);
                 END
-                IF ((key(_control)) AND (opcion == 1))
+                IF ((key(_control) || jkeys_state[_JKEY_A]) AND (opcion == 1))
                     fclose(file_data);
                     exit("", 0);
                 END
@@ -2055,4 +2069,25 @@ BEGIN
     fade_on(0);
     menu();
 
+END
+
+PROCESS lee_joystick()
+
+BEGIN
+    jkeys_controller();
+
+    IF (key(_w))
+        WHILE(key(_w))
+            frame;
+        END
+        IF (full_screen)
+            set_mode(640, 480, MODE_WINDOW);
+            full_screen = false;
+            return;
+        ELSE
+            set_mode(640, 480, MODE_FULLSCREEN);
+            full_screen = true;
+            return;
+        END
+    END
 END
