@@ -315,6 +315,7 @@ BEGIN
     END
 
     explosion = true;
+    bomba = false;
     sound_stop(reloj);
     sound_play(s_explosion, 0);
      
@@ -360,7 +361,7 @@ BEGIN
     END
 
     explosion = false;
-    //bomba = 0;
+    bomba = false;
 
     IF (pant_bomba == pant)
        bichos(pant);
