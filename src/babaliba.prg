@@ -21,7 +21,7 @@ IMPORT "mod_sound"
 IMPORT "mod_misc"
 IMPORT "mod_debug"
 
-#include "jkey.lib"
+#include "src/lib/jkey.lib"
 
 CONST
 
@@ -123,20 +123,20 @@ BEGIN
 
     //sonidos
 
-    s_explosion = sound_load("sound/bomba_exp.wav");
-    s_reloj = sound_load("sound/siseo_bomba.wav");
-    s_serpiente = sound_load("sound/serpiente.wav");
-    s_chapuzon = sound_load("sound/chapuzon.wav");
-    s_grito = sound_load("sound/grito.wav");
-    s_pasos = sound_load("sound/pasos.wav");
-    s_bocado = sound_load("sound/bocado.wav");
+    s_explosion = sound_load("sfx/bomba_exp.wav");
+    s_reloj = sound_load("sfx/siseo_bomba.wav");
+    s_serpiente = sound_load("sfx/serpiente.wav");
+    s_chapuzon = sound_load("sfx/chapuzon.wav");
+    s_grito = sound_load("sfx/grito.wav");
+    s_pasos = sound_load("sfx/pasos.wav");
+    s_bocado = sound_load("sfx/bocado.wav");
     
-    m_menu = music_load("sound/menu.ogg");
-    m_muerte = music_load("sound/muerte.ogg");
-    m_tesoro = music_load("sound/tesoro.ogg");
-    m_fmuerte = music_load("sound/fin_muerte.ogg");
-    m_fbien = music_load("sound/fin_bien.ogg");
-    m_premio = music_load("sound/premio.ogg");
+    m_menu = music_load("music/menu.ogg");
+    m_muerte = music_load("music/muerte.ogg");
+    m_tesoro = music_load("music/tesoro.ogg");
+    m_fmuerte = music_load("music/fin_muerte.ogg");
+    m_fbien = music_load("music/fin_bien.ogg");
+    m_premio = music_load("music/premio.ogg");
 
     splash();
 
