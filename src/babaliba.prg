@@ -98,6 +98,11 @@ GLOBAL
     int reloj;
     int pasos;
 
+    // Ciclo de vida de algunos objetos
+    bool is_serpiente = false;
+    bool is_bomba_mecha = false;
+    int timer_pausa_bomba = 0;
+
     // Control pantalla completa o ventana
     bool full_screen = true;
         
@@ -282,6 +287,7 @@ PRIVATE
 
 BEGIN
 
+    is_bomba_mecha = true;
     z = -511;
     IF (bombas > 9)
        marcador(bombas, 380, 370);
@@ -296,24 +302,25 @@ BEGIN
     reloj = sound_play(s_reloj, 0);
     WHILE (timer[0] < 500)
 
-       IF (pant == pant_bomba)
-           graph = grafico;
-       ELSE
-           graph = 99;
-       END
-       frame;
-
-       timer[1]=0;
-       WHILE ((timer[1] < 10) AND (pant_bomba == pant))
-           frame;
-       END
-       grafico++;
-       IF (grafico == 28)
-           grafico = 24;
-       END
+        IF (pant == pant_bomba)
+            graph = grafico;
+        ELSE
+            graph = 99;
+        END
+        frame;
+ 
+        timer[1] = 0;
+        WHILE ((timer[1] < 10) AND (pant_bomba == pant))
+            frame;
+        END
+        grafico++;
+        IF (grafico == 28)
+            grafico = 24;
+        END
 
     END
 
+    is_bomba_mecha = false;
     explosion = true;
     bomba = false;
     sound_stop(reloj);
@@ -370,6 +377,10 @@ BEGIN
     pant_bomba = 200;
     bomba = false;
     signal(type p_bomba, s_kill);
+
+ONEXIT
+
+    is_bomba_mecha = false;
 
 END
 
@@ -561,6 +572,7 @@ PRIVATE
 
 BEGIN
 
+    is_serpiente = true;
     canal_serpiente = sound_play(s_serpiente, 0);
     graph = 110;
     x = ((xx * 60) - 10);
@@ -577,6 +589,10 @@ BEGIN
             canal_serpiente = sound_play(s_serpiente, 0);
         END
     END
+
+ONEXIT
+
+    is_serpiente = false;
 
 END
 
@@ -1725,6 +1741,8 @@ PRIVATE
 
 BEGIN
         
+    timer_pausa_bomba = timer[0];
+
     signal(type johnny, s_freeze);
     signal(type p_bomba, s_freeze);
     signal(type malo_movil, s_freeze);
@@ -1774,8 +1792,13 @@ BEGIN
                     signal(type p_tiempo, s_wakeup);
                     signal(type llaveverde, s_wakeup);
                     signal(type llaverosa, s_wakeup);
-                    sound_play(reloj);
-                    sound_play(canal_serpiente);
+                    IF (is_bomba_mecha == true)
+                        timer[0] = timer_pausa_bomba;
+                        sound_play(s_reloj);
+                    END
+                    IF (is_serpiente)
+                        sound_play(s_serpiente);
+                    END
                     signal(type escape, s_kill);
                 END
                 IF ((key(_control) || jkeys_state[_JKEY_A]) AND (opcion == 1))
@@ -1856,7 +1879,7 @@ BEGIN
             frame;
         END
         signal(type p_bomba, s_wakeup);
-        sound_play(reloj);
+        sound_play(s_reloj);
         signal(type p_tiempo, s_wakeup);
         signal(type p_prisionero, s_wakeup);
         p_princesa();
