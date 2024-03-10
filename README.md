@@ -48,8 +48,11 @@ Hasta que aprenda a manejar bien los makefiles, nos apañamos con esto.
 
 ## Agradecimientos
 
-* A Miguel A. García Prada y David Masia por hacer originalmente el remake.
-* A Juan Ponteprino, por ayudarnos con los ejecutables de BennuGD2 para macOS.
+* A [Miguel A. García Prada](https://twitter.com/MiguelPrada) y [Davit Masia](https://twitter.com/DavidMasia) por hacer originalmente el remake.
+* A [Daniel T. Borelli](https://codeberg.org/daltomi), por crear el canal de Telegram de BennuGD y ayudarnos a contactar con Juan Ponteprino.
+* A [Juan Ponteprino](https://twitter.com/SplinterGU), por ayudarnos con los ejecutables de BennuGD2 para macOS y resolver todas las dudas que le hemos planteado.
+* A [Linus Unnebäck](https://github.com/LinusU/node-appdmg) por la herramienta `appdmg`.
+* A todos los amigos a los que les he pasado el juego para que lo probasen y reportasen fallos.
 * A ti, por jugar a este juego.
 
 ---

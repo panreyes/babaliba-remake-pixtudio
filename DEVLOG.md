@@ -24,19 +24,10 @@ Luego, ha sido cuestión de ir adaptando el código sin modificar su estructura 
 
 Por último, me he permitido el lujo de meter algunas mejoras, como una *splash screen*, soporte para joystick o poder alternar entre ventana y pantalla completa.
 
-No me siento para nada orgulloso de cómo ha quedado el código fuente. Pero, como digo, la estrategia ha sido tocar lo mínimo del original para que funcionase. Repito, no es que no sea experto en el lenguaje usado, es que hasta que he empezado con este tema, no tenía la más mínima idea ni de la sintaxis, no hablemos ya de su arquitectura.
+No me siento para nada orgulloso de cómo ha quedado el código fuente. Pero, como digo, la estrategia ha sido tocar lo mínimo del original para que funcionase. Repito, no es que no sea experto en el lenguaje usado, es que hasta que he empezado con este tema, no tenía la más mínima idea ni de la sintaxis, no hablemos ya de su arquitectura. Al final, no ha sido otra cosa que un ejercicio de pelear con *legacy code*, como si fuera resolver un puzle.
 
 Para generar el bundle de la aplicación y la imagen de disco para distribuirla, he recuperado un trabajo que ya hice hace 8 años para el [port de UWOL para macOS](https://github.com/AugustoRuiz/UWOL/pull/1) de Augusto Ruiz. Recordaba haberlo hecho, pero no cómo se hacía. Afortunadamente, para eso están los repositorios de software y toda la documentación generada alrededor.
 
-## Agradecimientos
-
-* A Miguel A. García Prada y David Masia por hacer originalmente el remake.
-* A Daniel, por crear el canal de Telegram de BennuGD y ayudarnos a contactar con SplinterGU.
-* A Juan Ponteprino, por ayudarnos con los ejecutables de BennuGD2 para macOS y resolver todas las dudas que le hemos planteado.
-* A todos los amigos a los que les he pasado el juego para que lo probasen y reportasen fallos.
-* A ti, por jugar a este juego.
-
-
 ---
 
-Fede J. Álvarez
+Fede J. Álvarez, marzo de 2024.
