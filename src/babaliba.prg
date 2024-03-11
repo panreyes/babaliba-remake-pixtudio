@@ -6,20 +6,10 @@
 // Adaptación código BennuGD: Federico J. Álvarez Valero
 // -----------------------------------------------------
 
-#define init_bgd1_background_emulation() background.file = 0; background.graph = map_new(640,480)
-#define put_screen(f,g) map_clear(0, background.graph ); map_put(0, background.graph, f, g, 320, 240)
-#define clear_screen() map_clear(0, background.graph )
-#define put( f, g, x, y ) map_put(0, background.graph, f, g, x, y)
-#define map_xput(fdst,gdst,gsrc,x,y,angle,size,flags) map_put(fdst, gdst, fdst, gsrc, x, y, angle, size, size, flags, 255, 255, 255, 255)
-#define xput(f,g,x,y,angle,size,flags,region) map_put(0, background.graph, f, g, x, y, angle, size, size, flags, 255, 255, 255, 255)
-
 PROGRAM Babaliba;
 
-IMPORT "mod_gfx"
-IMPORT "mod_input"
-IMPORT "mod_sound"
-IMPORT "mod_misc"
-IMPORT "mod_debug"
+#define RAWRLAB_DISABLE_CUSTOM_MOD_TEXT 1
+include "../../../libs/rawrlab-fw/framework.h";
 
 #include "src/lib/jkey.lib"
 
@@ -65,7 +55,8 @@ GLOBAL
     byte vidas;
     int bombas;
     bool bomba; //si hay bomba activa = true
-    int byte pant_bomba = 200; //pantalla en la que se coloca la bomba
+    //int byte pant_bomba = 200; //pantalla en la que se coloca la bomba
+	int pant_bomba = 200; //pantalla en la que se coloca la bomba
     bool explosion; //si explosion true
     int tiempo;
     int graf1; // fichero
@@ -104,19 +95,19 @@ GLOBAL
     int timer_pausa_bomba = 0;
 
     // Control pantalla completa o ventana
-    bool full_screen = true;
+    //bool full_screen = true;
         
 // COMIENZO DEL PROGRAMA
 
 BEGIN
-
-    set_mode(640, 480, MODE_FULLSCREEN);
-    window_set_title("Babaliba Remake");
-    init_bgd1_background_emulation();
+	full_screen = false;
+    // set_mode(640, 480, MODE_FULLSCREEN);
+	set_mode(640, 480);
+	set_title("Babaliba Remake");
     set_fps(30, 4);
     lee_joystick();
     channel_set_volume(-1, 64);
-    music_set_volume(64);
+	song_set_volume(64);
     graf1 = fpg_load("gfx/graf01.fpg");
     file_data = fopen("data/datos_mapa.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE EL MAPEADO
     bicho_data = fopen("data/datos_bichos.dat", O_READ); //ABRIMOS EL FICHERO QUE CONTIENE LOS BICHOS
@@ -131,12 +122,12 @@ BEGIN
     s_pasos = sound_load("sfx/pasos.wav");
     s_bocado = sound_load("sfx/bocado.wav");
     
-    m_menu = music_load("music/menu.ogg");
-    m_muerte = music_load("music/muerte.ogg");
-    m_tesoro = music_load("music/tesoro.ogg");
-    m_fmuerte = music_load("music/fin_muerte.ogg");
-    m_fbien = music_load("music/fin_bien.ogg");
-    m_premio = music_load("music/premio.ogg");
+    m_menu = song_load("music/menu.ogg");
+    m_muerte = song_load("music/muerte.ogg");
+    m_tesoro = song_load("music/tesoro.ogg");
+    m_fmuerte = song_load("music/fin_muerte.ogg");
+    m_fbien = song_load("music/fin_bien.ogg");
+    m_premio = song_load("music/premio.ogg");
 
     splash();
 
@@ -191,7 +182,7 @@ BEGIN
     babaliba = 0;
 
     let_me_alone();  
-    music_play(m_menu, -1);
+    song_play(m_menu, -1);
     put(graf1, 84, 320, 240);
     put(graf1, 2, 50, 230);
     put(graf1, 79, 590, 50);
@@ -203,8 +194,9 @@ BEGIN
     LOOP
         lee_joystick();
         IF (key(_space) || jkeys_state[_JKEY_SELECT])
-            clear_screen(); 
-            music_stop(); 
+            //clear_screen(); 
+			screen_clear();
+            song_stop(); 
             sound_stop(canal_serpiente); 
             signal(type banner, s_kill); 
             signal(type serpiente, s_kill); 
@@ -262,7 +254,7 @@ BEGIN
     lee_mapa(pant);
     FROM bucle = 0 TO 49; //COMIENZA EL BUCLE PARA VOLCAR LOS BLOQUES GRAFICOS EN LA PANTALLA.
         IF ((lectura[puntero] > 0) AND (lectura[puntero] != 99))
-            map_put(graf1, 999, graf1, lectura[puntero], x1, y1); // era map_put(graf1, 999, lectura[puntero], x1, y1);
+            map_put(graf1, 999, lectura[puntero], x1, y1); // era map_put(graf1, 999, lectura[puntero], x1, y1);
         END //COLOCA EL BLOQUE EN LAS COORDENADAS CORRESPONDIENTES SIEMPRE QUE NO SEA '0'
         x1 = x1 + w_bloque; //INCREMENTA LA COORDENADA HORIZONTAL PARA DIBUJAR EL PROXIMO BUCLE.
         IF (x1 > 580) //SI LLEGAMOS AL FINAL DE LA PANTALLA PONEMOS BAJAMOS UNA FILA Y RESTAURAMOS 'X' AL COMIENZO.
@@ -337,7 +329,7 @@ BEGIN
      
     IF ((pant_bomba == 126) AND (prisionero == false))
        let_me_alone();
-       music_play(m_fmuerte, 0);
+       song_play(m_fmuerte, 0);
        put(graf1, 53, 320, 170);
        put(graf1, 88, 320, 140);
        put(graf1, 87, 320, 180);
@@ -350,7 +342,7 @@ BEGIN
      
     IF ((pant_bomba == 5) AND (princesa == false))
        let_me_alone();
-       music_play(m_fmuerte, 0);
+       song_play(m_fmuerte, 0);
        put(graf1, 53, 320, 170);
        put(graf1, 95, 320, 140);
        put(graf1, 87, 320, 180);
@@ -475,7 +467,7 @@ BEGIN
 
     IF ((pant == 34) AND (tesoro == false))
         sound_stop(reloj);
-        music_play(m_tesoro, -0);
+        song_play(m_tesoro, -0);
         signal(type p_bomba, s_kill);
         signal(type p_tiempo, s_sleep);
         tesoro = true;
@@ -918,7 +910,7 @@ BEGIN
         END
 
         timer[4] = 0;
-        music_play(m_muerte, 0);
+        song_play(m_muerte, 0);
         WHILE (timer[4] < 350)
             frame;
         END
@@ -932,7 +924,7 @@ BEGIN
 
         signal(type muerte ,s_kill);
     ELSE
-        music_play(m_fmuerte, 0);
+        song_play(m_fmuerte, 0);
         put(graf1, 150, 530, 370);
         put(graf1, 86,320, 140);
         put(graf1, 87,320, 180);
@@ -1305,7 +1297,7 @@ BEGIN
             frame;
             put(graf1, 53, 320, 170);
             put(graf1, 89,320, 170);
-            music_play(m_tesoro, 0);
+            song_play(m_tesoro, 0);
             timer[4] = 0;
             WHILE (timer[4] < 320)
                 frame;
@@ -1447,7 +1439,7 @@ BEGIN
         IF (tiempo <= 0)
             let_me_alone();
             sound_stop(reloj);
-            music_play(m_fmuerte, 0);
+            song_play(m_fmuerte, 0);
             put(graf1, 53, 320, 170);
             put(graf1, 91,320, 140);
             put(graf1, 87,320, 180);
@@ -1515,7 +1507,7 @@ BEGIN
             let_me_alone();
             put(graf1, 53, 320, 170);
             put(graf1, 94,320, 170);
-            music_play(m_tesoro, 0);
+            song_play(m_tesoro, 0);
             timer[4] = 0;
             WHILE (timer[4] < 320)
                 frame;
@@ -1637,7 +1629,7 @@ BEGIN
 
         IF (collision(Type johnny))
             llave_rosa = true;
-            sonido = music_play(m_premio, 0);
+            sonido = song_play(m_premio, 0);
             graph = 99;
         END
 
@@ -1692,7 +1684,7 @@ BEGIN
 
         IF (collision(Type johnny))
             llave_verde = true;
-            sonido = music_play(m_premio, 0);
+            sonido = song_play(m_premio, 0);
             graph = 99;
         END
 
@@ -1794,10 +1786,10 @@ BEGIN
                     signal(type llaverosa, s_wakeup);
                     IF (is_bomba_mecha == true)
                         timer[0] = timer_pausa_bomba;
-                        sound_play(s_reloj);
+                        sound_play(s_reloj, 0);
                     END
                     IF (is_serpiente)
-                        sound_play(s_serpiente);
+                        sound_play(s_serpiente, 0);
                     END
                     signal(type escape, s_kill);
                 END
@@ -1808,7 +1800,7 @@ BEGIN
             END //CASE 0:
 
             CASE 1:
-                music_pause();
+                song_pause();
                 signal(type menu, s_freeze);
                 x = 320;
                 y = 220;
@@ -1831,7 +1823,7 @@ BEGIN
                     signal(type arana, s_wakeup);
                     signal(type banner, s_wakeup);
                     signal(type menu, s_wakeup);
-                    music_resume();
+                    song_resume();
                     signal(type escape, s_kill);
                 END
                 IF ((key(_control) || jkeys_state[_JKEY_A]) AND (opcion == 1))
@@ -1873,13 +1865,13 @@ BEGIN
         put(graf1, 53, 320, 170);
         put(graf1, 169, 320, 140);
         put(graf1, 170, 320, 180);
-        music_play(m_tesoro, 0);
+        song_play(m_tesoro, 0);
         timer[4] = 0;
         WHILE (timer[4] < 320)
             frame;
         END
         signal(type p_bomba, s_wakeup);
-        sound_play(s_reloj);
+        sound_play(s_reloj, 0);
         signal(type p_tiempo, s_wakeup);
         signal(type p_prisionero, s_wakeup);
         p_princesa();
@@ -1925,7 +1917,7 @@ BEGIN
                             baba7 = true; 
                         END
                         put(graf1,165, 110, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1942,7 +1934,7 @@ BEGIN
                             baba7 = true; 
                         END
                         put(graf1, 165, 230, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1959,7 +1951,7 @@ BEGIN
                             baba7 = true; 
                         END
                         put(graf1, 165, 470, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1980,7 +1972,7 @@ BEGIN
                             baba8 = true; 
                         END
                         put(graf1, 166, 170, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
 
@@ -1997,7 +1989,7 @@ BEGIN
                             baba8 = true; 
                         END
                         put(graf1, 166, 290, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END //IF (babal4 == false)
 
@@ -2005,7 +1997,7 @@ BEGIN
                         babaliba++;
                         babal8 = true;
                         put(graf1, 166, 530, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         let_me_alone();
                         sound_stop(reloj);
                         graph = 99;
@@ -2018,7 +2010,7 @@ BEGIN
                         put(graf1, 172, 320, 220);
                         p_princesa();
                         p_prisionero();
-                        music_play(m_fbien, 0);
+                        song_play(m_fbien, 0);
                         timer[4] = 0;
                         WHILE (timer[4] < 1200)
                             frame;
@@ -2034,7 +2026,7 @@ BEGIN
                         babal5 = true;
                         baba5 = true;
                         put(graf1, 167, 350, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
                 END
@@ -2046,7 +2038,7 @@ BEGIN
                         babal6 = true;
                         baba6 = true;
                         put(graf1, 168, 410, 450);
-                        sonido = music_play(m_premio, 0);
+                        sonido = song_play(m_premio, 0);
                         signal(type letra, s_kill);
                     END
                 END
@@ -2085,12 +2077,15 @@ BEGIN
     splashScreen = map_load("gfx/splash.png");
     xput(file, splashScreen, 320, 240, 0, 100, 0, region);
     frame(5000);
-    fade_off(1000);
-    WHILE (fade_info.fading)
+    //fade_out(1000);
+	fade_out();
+    WHILE (fading)
         frame; 
     END
-    clear_screen();
-    fade_on(0);
+    //clear_screen();
+	screen_clear();
+    //fade_on(0);
+	fade_in();
     menu();
 
 END

@@ -1,5 +1,7 @@
+/*
 import "mod_input";
 import "mod_misc";
+*/
 
 /* -------------------------------------------------------------------------- */
 
@@ -52,8 +54,9 @@ end
 
 process jkeys_controller()
 private
-    int i;
+//    int i;
     int axis_x, axis_y;
+	int joy;
 begin
     signal_action( s_kill, s_ign );
     signal_action( s_freeze, s_ign );
@@ -61,6 +64,26 @@ begin
     signal( type jkeys_controller, s_kill );
     signal_action( s_kill, s_dfl );
 
+	gamepads_init();
+	loop
+		jkeys_state[ _JKEY_UP           ] = get_button(0, b_up);
+		jkeys_state[ _JKEY_LEFT         ] = get_button(0, b_left);
+		jkeys_state[ _JKEY_DOWN         ] = get_button(0, b_down);
+		jkeys_state[ _JKEY_RIGHT        ] = get_button(0, b_right);
+		jkeys_state[ _JKEY_MENU         ] = get_button(0, b_start);
+		jkeys_state[ _JKEY_SELECT       ] = get_button(0, b_start);
+		jkeys_state[ _JKEY_VOLUP        ] = get_button(0, b_start);
+		jkeys_state[ _JKEY_VOLDOWN      ] = get_button(0, b_start);
+		jkeys_state[ _JKEY_A            ] = get_button(0, b_a);
+		jkeys_state[ _JKEY_B            ] = get_button(0, b_b);
+		jkeys_state[ _JKEY_X            ] = get_button(0, b_x);
+		jkeys_state[ _JKEY_Y            ] = get_button(0, b_y);
+		jkeys_state[ _JKEY_L            ] = get_button(0, b_l1);
+		jkeys_state[ _JKEY_R            ] = get_button(0, b_r1);
+
+		frame;
+	end
+/*
     loop
         for ( i = 0; i < _JKEY_LAST; i++ )
             if ( jkeys[i] )
@@ -70,7 +93,8 @@ begin
             end
         end
 
-        int joy = joy_query( JOY_QUERY_FIRST_ATTACHED );
+        // joy = joy_query( JOY_QUERY_FIRST_ATTACHED );
+		joy = 0;
 
         if ( joy != -1 )
             jkeys_state[ _JKEY_UP           ] |= joy_query( joy, JOY_BUTTON_DPAD_UP        ) || joy_query( joy, JOY_AXIS_LEFTY ) < -16384;
@@ -91,6 +115,7 @@ begin
 
         frame;
     end
+*/
 end
 
 /* -------------------------------------------------------------------------- */
